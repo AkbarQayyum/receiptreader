@@ -1,17 +1,24 @@
 import { StyleSheet, Text, View } from "react-native";
-import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
+import { NavigationContainer, useIsFocused } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import HomeScreen from "./Screens/HomeScreen";
-import Login from "./Screens/Login";
-import Registration from "./Screens/Registration";
+import HomeScreen from "./src/Screens/HomeScreen";
+import Login from "./src/Screens/Login";
+import Registration from "./src/Screens/Registration";
+import { useSelector } from "react-redux";
+import { getLoginProps } from "./Redux/Slices/UserSessionSlice";
 const Stack = createNativeStackNavigator();
 // import { createDrawerNavigator } from "@react-navigation/drawer";
 // const Drawer = createDrawerNavigator();
 const Routes = () => {
+  const { isLogin } = useSelector(getLoginProps);
+  const [check, setcheck] = useState(false);
+  useEffect(() => {
+    setcheck(isLogin);
+  }, [isLogin]);
   return (
     <NavigationContainer fallback={"loading..."}>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName={check ? "Home" : "Login"}>
         <Stack.Screen
           name="Login"
           component={Login}

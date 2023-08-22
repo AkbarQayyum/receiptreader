@@ -4,6 +4,7 @@ import tw from "twrnc";
 import { Button } from "native-base";
 import * as ImagePicker from "expo-image-picker";
 import { Image } from "react-native";
+import Loader from "../components/Loader/Loader";
 
 const HomeScreen = () => {
   const [image, setImage] = useState(null);
@@ -44,6 +45,7 @@ const HomeScreen = () => {
           </Button>
         </View>
       ) : null}
+     
     </View>
   );
 };
