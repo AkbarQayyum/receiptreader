@@ -8,6 +8,7 @@ import axiosInstance from "../../utils/axiosinstance";
 import { useDispatch, useSelector } from "react-redux";
 import { getLoginProps, setIsLogin } from "../../Redux/Slices/UserSessionSlice";
 import { useIsFocused } from "@react-navigation/native";
+import { Controller, useForm } from "react-hook-form";
 const Login = ({ navigation }) => {
   const [data, setdata] = useState({});
   const { isLogin } = useSelector(getLoginProps);
@@ -22,11 +23,23 @@ const Login = ({ navigation }) => {
   const handleNavigate = () => {
     navigation.navigate("Registration");
   };
-  const handleLogin = async () => {
-    // navigation.navigate('Home')
+
+  // doing validating the text feild
+
+  const {
+    handleSubmit,
+    formState: { errors },
+    control,
+  } = useForm();
+  // writing RegEx for input feilds
+  const userNameRegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{5,18}$/;
+  const passwordRegEx =
+    /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+  const handleLogin = async (data) => {
+    console.log(data);
+
     setloading(true);
 
-    console.log(data);
     let res = await axiosInstance.post("/users/auth/login/", data);
     console.log(res.data);
     if (res.data.isSuccess) {
@@ -52,31 +65,76 @@ const Login = ({ navigation }) => {
         </View>
         <View>
           <Text style={tw`font-bold`}>Username</Text>
-          <Input
-            width={"100%"}
-            borderRadius={10}
-            borderBottomWidth={5}
-            placeholder="Username..."
-            onChangeText={(e) => {
-              handleChange(e, "username");
+          <Controller
+            control={control}
+            rules={{
+              required: "UserName is Required",
+              pattern: {
+                value: userNameRegEx,
+                message:
+                  "Please enter One Uppercase one Lowercase letter and one number min length 5 and max length 18",
+              },
             }}
+            render={({ field }) => (
+              <>
+                <Input
+                  width={"100%"}
+                  borderRadius={10}
+                  borderBottomWidth={5}
+                  placeholder="Username..."
+                  onChangeText={(e) => {
+                    field.onChange(e);
+                    handleChange(e, "username");
+                  }}
+                />
+                {errors.username && (
+                  <Text style={tw`text-red-500 text-sm`}>
+                    {errors.username.message}
+                  </Text>
+                )}
+              </>
+            )}
+            name="username"
           />
         </View>
         <View>
           <Text style={tw`font-bold`}>Password</Text>
-          <Input
-            width={"100%"}
-            borderRadius={10}
-            borderBottomWidth={5}
-            secureTextEntry
-            placeholder="Password..."
-            onChangeText={(e) => {
-              handleChange(e, "password");
+          <Controller
+            control={control}
+            rules={{
+              required: "Password is Required",
+              pattern: {
+                value: passwordRegEx,
+                message:
+                  "Password must contain at least one uppercase letter, one lowercase letter, one digit, one special character, and be at least 8 characters long",
+              },
             }}
+            render={({ field }) => (
+              <>
+                <Input
+                  width={"100%"}
+                  borderRadius={10}
+                  borderBottomWidth={5}
+                  secureTextEntry
+                  placeholder="Password..."
+                  onChangeText={(e) => {
+                    field.onChange(e);
+                    handleChange(e, "password");
+                  }}
+                />
+
+                {errors.password && (
+                  <Text style={tw`text-red-500 text-sm`}>
+                    {errors.password.message}
+                  </Text>
+                )}
+              </>
+            )}
+            name="password"
           />
         </View>
         <View style={tw`w-full`}>
-          <Button style={tw`w-full`} onPress={handleLogin}>
+          <Button style={tw`w-full`} onPress={handleSubmit(handleLogin)}>
             Login
           </Button>
         </View>

@@ -1,12 +1,26 @@
 import { View, Text, Pressable } from "react-native";
-
 import React, { useState } from "react";
 import tw from "twrnc";
 import { Ionicons } from "react-native-vector-icons";
 import { Button, Input } from "native-base";
 import Loader from "../components/Loader/Loader";
 import axiosInstance from "../../utils/axiosinstance";
+import { Controller, useForm } from "react-hook-form";
+
 const Registration = ({ navigation }) => {
+  const {
+    control,
+    formState: { errors },
+    handleSubmit,
+  } = useForm();
+
+  const userNameRegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{5,18}$/;
+  const passwordRegEx =
+    /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+  const emailRegEx = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+  const phoneNumberRegEx =
+    /^[\+0]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
+
   const [data, setdata] = useState({});
   const [loading, setloading] = useState(false);
   const handleChange = (text, title) => {
@@ -16,17 +30,16 @@ const Registration = ({ navigation }) => {
   const handleNavigate = () => {
     navigation.navigate("Login");
   };
-  const handleSubmit = async () => {
+  const handleSubmits = async () => {
     setloading(true);
     console.log(data);
     let res = await axiosInstance.post("/users/auth/register", data);
     console.log(res.data);
     if (res.data.isSuccess) {
-    setloading(false)
+      setloading(false);
       navigation.navigate("Login");
     }
     setloading(false);
-
   };
   return (
     <>
@@ -39,55 +52,144 @@ const Registration = ({ navigation }) => {
         </View>
         <View>
           <Text style={tw`font-bold`}>Username</Text>
-          <Input
-            width={"100%"}
-            borderRadius={10}
-            borderBottomWidth={5}
-            placeholder="Username..."
-            onChangeText={(e) => {
-              handleChange(e, "username");
+          <Controller
+            control={control}
+            rules={{
+              required: "Username is Required",
+              pattern: {
+                value: userNameRegEx,
+                message:
+                  "Please enter One Uppercase one Lowercase letter and one number min length 5 and max length 18",
+              },
             }}
+            render={({ field }) => (
+              <>
+                <Input
+                  width={"100%"}
+                  borderRadius={10}
+                  borderBottomWidth={5}
+                  placeholder="Username..."
+                  onChangeText={(e) => {
+                    field.onChange(e);
+                    handleChange(e, "username");
+                  }}
+                />
+
+                {errors.username && (
+                  <Text style={tw`text-red-500 text-sm`}>
+                    {errors.username.message}
+                  </Text>
+                )}
+              </>
+            )}
+            name="username"
           />
         </View>
         <View>
           <Text style={tw`font-bold`}>Password</Text>
-          <Input
-            width={"100%"}
-            borderRadius={10}
-            borderBottomWidth={5}
-            secureTextEntry
-            placeholder="Password..."
-            onChangeText={(e) => {
-              handleChange(e, "password");
+          <Controller
+            control={control}
+            rules={{
+              required: "password is required",
+              pattern: {
+                value: passwordRegEx,
+                message:
+                  "Password must contain at least one uppercase letter, one lowercase letter, one digit, one special character, and be at least 8 characters long",
+              },
             }}
+            render={({ field }) => (
+              <>
+                <Input
+                  width={"100%"}
+                  borderRadius={10}
+                  borderBottomWidth={5}
+                  secureTextEntry
+                  placeholder="Password..."
+                  onChangeText={(e) => {
+                    field.onChange(e);
+                    handleChange(e, "password");
+                  }}
+                />
+
+                {errors.password && (
+                  <Text style={tw`text-red-500 text-sm`}>
+                    {errors.password.message}
+                  </Text>
+                )}
+              </>
+            )}
+            name="password"
           />
         </View>
         <View>
           <Text style={tw`font-bold`}>Email</Text>
-          <Input
-            width={"100%"}
-            borderRadius={10}
-            borderBottomWidth={5}
-            placeholder="Email..."
-            onChangeText={(e) => {
-              handleChange(e, "email");
+          <Controller
+            control={control}
+            rules={{
+              required: "Email is Required",
+              pattern: {
+                value: emailRegEx,
+                message: "Please enter valid email address",
+              },
             }}
+            render={({ field }) => (
+              <>
+                <Input
+                  width={"100%"}
+                  borderRadius={10}
+                  borderBottomWidth={5}
+                  placeholder="Email..."
+                  onChangeText={(e) => {
+                    field.onChange(e);
+                    handleChange(e, "email");
+                  }}
+                />
+
+                {errors.email && (
+                  <Text style={tw`text-red-500 text-sm`}>
+                    {errors.email.message}
+                  </Text>
+                )}
+              </>
+            )}
+            name="email"
           />
         </View>
         <View>
           <Text style={tw`font-bold`}>Phone</Text>
-          <Input
-            width={"100%"}
-            borderRadius={10}
-            borderBottomWidth={5}
-            placeholder="Phone Number..."
-            onChangeText={(e) => {
-              handleChange(e, "phone");
+          <Controller
+            control={control}
+            rules={{
+              required: "Phone number is Required",
+              pattern: {
+                value: phoneNumberRegEx,
+                message: "Please Enter valid Phone Number",
+              },
             }}
+            render={({ field }) => (
+              <>
+                <Input
+                  width={"100%"}
+                  borderRadius={10}
+                  borderBottomWidth={5}
+                  placeholder="Phone Number..."
+                  onChangeText={(e) => {
+                    field.onChange(e);
+                    handleChange(e, "phone");
+                  }}
+                />
+                {errors.phonenumber && (
+                  <Text style={tw`text-red-500 text-sm`}>
+                    {errors.phonenumber.message}
+                  </Text>
+                )}
+              </>
+            )}
+            name="phonenumber"
           />
         </View>
         <View style={tw`w-full`}>
-          <Button style={tw`w-full`} onPress={handleSubmit}>
+          <Button style={tw`w-full`} onPress={handleSubmit(handleSubmits)}>
             Register
           </Button>
         </View>
@@ -99,9 +201,7 @@ const Registration = ({ navigation }) => {
           </Pressable>
         </View>
       </View>
-      {
-      loading?<Loader />:null
-      }
+      {loading ? <Loader /> : null}
     </>
   );
 };
