@@ -13,8 +13,12 @@ export const UserSessionSlice = createSlice({
       state.isLogin = true;
       state.user = action.payload;
     },
+    setIsLogout: (state, action) => {
+      state.isLogin = false;
+      state.user ={};
+    },
   },
 });
 export const getLoginProps = (state) => state.UserSessionSlice;
-export const { setIsLogin } = UserSessionSlice.actions;
+export const { setIsLogin, setIsLogout } = UserSessionSlice.actions;
 export default UserSessionSlice.reducer;

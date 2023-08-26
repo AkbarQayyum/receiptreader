@@ -58,7 +58,7 @@ const Login = ({ navigation }) => {
     <>
       <View style={tw`flex-1 items-center justify-center gap-5 p-4`}>
         <View style={tw`flex items-center`}>
-          <Ionicons name={"receipt-outline"} size={100} color={"blue"} />
+          <Ionicons name={"receipt-outline"} size={100} color={"272829"} />
           <Text style={tw`font-bold text-xl text-gray-600`}>
             Receipt Reader
           </Text>
@@ -134,7 +134,11 @@ const Login = ({ navigation }) => {
           />
         </View>
         <View style={tw`w-full`}>
-          <Button style={tw`w-full`} onPress={handleSubmit(handleLogin)}>
+          <Button
+            style={tw`w-full `}
+            backgroundColor={'272829'}
+            onPress={handleSubmit(handleLogin)}
+          >
             Login
           </Button>
         </View>

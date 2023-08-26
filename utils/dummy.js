@@ -1,0 +1,22 @@
+    export const dummydata =  {
+      "ADDRESS": "Ying Thai Kitchen\n2220 Queen Anne AVE N\nSeattle WA 98109",
+      "STREET": "2220 Queen Anne AVE N",
+      "CITY": "Seattle",
+      "STATE": "WA",
+      "ZIP_CODE": "98109",
+      "NAME": "Ying Thai Kitchen",
+      "ADDRESS_BLOCK": "2220 Queen Anne AVE N\nSeattle WA 98109",
+      "INVOICE_RECEIPT_DATE": "7/4/2013",
+      "INVOICE_RECEIPT_ID": "17",
+      "SUBTOTAL": "$11.50",
+      "TAX": "$1.09",
+      "TOTAL": "$12.59",
+      "VENDOR_ADDRESS": "Ying Thai Kitchen\n2220 Queen Anne AVE N\nSeattle WA 98109",
+      "VENDOR_NAME": "Ying Thai Kitchen",
+      "VENDOR_PHONE": "(206) 285-8424",
+      "VENDOR_URL": "www.yingthaikitchen.com",
+      "OTHER": "15%=$1.89, 18%=$2.27, 20%=$2.52",
+      "ITEM": "44 Ginger Lover\n[Pork] [2**]",
+      "PRICE": "$9.50",
+      "EXPENSE_ROW": "44 Ginger Lover $9.50\n[Pork][2**]"
+    }

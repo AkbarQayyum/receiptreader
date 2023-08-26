@@ -45,7 +45,7 @@ const Registration = ({ navigation }) => {
     <>
       <View style={tw`flex-1 items-center justify-center gap-2 p-4`}>
         <View style={tw`flex items-center`}>
-          <Ionicons name={"receipt-outline"} size={100} color={"blue"} />
+          <Ionicons name={"receipt-outline"} size={100} color={"272829"} />
           <Text style={tw`font-bold text-xl text-gray-600`}>
             Receipt Reader
           </Text>
@@ -189,7 +189,11 @@ const Registration = ({ navigation }) => {
           />
         </View>
         <View style={tw`w-full`}>
-          <Button style={tw`w-full`} onPress={handleSubmit(handleSubmits)}>
+          <Button
+            style={tw`w-full`}
+            backgroundColor={"272829"}
+            onPress={handleSubmit(handleSubmits)}
+          >
             Register
           </Button>
         </View>
