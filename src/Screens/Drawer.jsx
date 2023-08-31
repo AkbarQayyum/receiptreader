@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native'
 import React from 'react'
-import { Ionicons, AntDesign } from "react-native-vector-icons";
+import { Ionicons, AntDesign, FontAwesome5 } from "react-native-vector-icons";
 import tw from "twrnc";
 import {
     createDrawerNavigator,
@@ -13,6 +13,7 @@ import Profile from "./Profile";
 import AllReceipt from "./AllReceipt";
 import { SimpleLineIcons } from '@expo/vector-icons'
 import JoinBill from './JoinBill';
+import AddFriend from './AddFriend';
 
 const Drawer = createDrawerNavigator();
 
@@ -110,6 +111,18 @@ const Drawers = () => {
               ),
             }}
             component={JoinBill}
+          />
+
+          <Drawer.Screen
+            name="Add Friend"
+            options={{
+              drawerLabel: "Add Friend",
+              title: "Add Friend",
+              drawerIcon: () => (
+                <FontAwesome5 name="user-friends" size={20} color="#808080" />
+              ),
+            }}
+            component={AddFriend}
           />
         </Drawer.Navigator>
         {/* </NavigationContainer> */}

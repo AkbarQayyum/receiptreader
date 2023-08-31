@@ -9,13 +9,16 @@ const initialState = {
 export const handleDummyData = createSlice({
   name: "handleDummyData",
   initialState,
-//   reducers: {
-//     setIsLogin: (state, action) => {
-//       state.isLogin = true;
-//       state.user = action.payload;
-//     },
-//   },
+  reducers: {
+    AddField: (state, action) => {
+     let val   = JSON.parse(JSON.stringify(state.data))
+     console.log(action.payload)
+     val = {...val,[action.payload.title]:action.payload.value}
+     console.log(val)
+     state.data = val
+    },
+  },
 });
 export const getdummydata = (state) => state.handleDummyData;
-// export const { setIsLogin } = handleDummyData.actions;
+export const { AddField } = handleDummyData.actions;
 export default handleDummyData.reducer;
