@@ -100,7 +100,7 @@ const HomeScreen = ({ navigation }) => {
               style={tw`w-[50]`}
               backgroundColor={"272829"}
             >
-              JOIN BILL
+              PAYABLE BILL
             </Button>
           )}
           {!image && (

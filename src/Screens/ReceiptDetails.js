@@ -4,8 +4,8 @@ import tw from "twrnc";
 import { Button, Input } from "native-base";
 import { AntDesign, Ionicons } from "react-native-vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
-import { useSelector } from "react-redux";
-import { getdummydata } from "../../Redux/Slices/handleDummyData";
+import { useDispatch, useSelector } from "react-redux";
+import { getdummydata, handleReset } from "../../Redux/Slices/handleDummyData";
 import { useEffect } from "react";
 import { useState } from "react";
 import axiosInstance from "../../utils/axiosinstance";
@@ -14,6 +14,7 @@ import AddFieldValue from "../components/AddFieldModal";
 import { useIsFocused } from "@react-navigation/native";
 import TaxandTip from "./TaxandTip";
 import { getLoginProps } from "../../Redux/Slices/UserSessionSlice";
+import axios from "axios";
 const ReceiptDetails = ({ setshowdetails, navigation }) => {
   const { data } = useSelector(getdummydata);
   const { user } = useSelector(getLoginProps);
@@ -22,9 +23,11 @@ const ReceiptDetails = ({ setshowdetails, navigation }) => {
   const isFocus = useIsFocused();
   const [showtax, setshowtax] = useState(false);
   const [loading, setloading] = useState(false);
+  const dispatch = useDispatch();
   console.log(data);
   const handleCancel = () => {
     setshowdetails(false);
+    dispatch(handleReset());
   };
 
   useEffect(() => {
@@ -45,6 +48,44 @@ const ReceiptDetails = ({ setshowdetails, navigation }) => {
       navigation.navigate("AllReceipt");
     }
     setloading(false);
+  };
+
+  const handleSaveAndShare = (values, dt) => {
+    setloading(true);
+    let friendlength = user?.friends?.length;
+    let allusers = [...user?.friends, user?._id];
+    console.log(allusers);
+    let obj = {};
+    let itemize = {};
+    Object.keys(values)?.map((d) => {
+      obj = { ...obj, [d]: parseInt(values[d] / (friendlength + 1)) };
+    });
+    Object.keys(dt)?.map((d) => {
+      itemize = { ...itemize, [d]: parseInt(dt[d] / (friendlength + 1)) };
+    });
+
+    const allreq = allusers?.map((u) => {
+      return axiosInstance.post("/friend/addreceipt", {
+        receipt: JSON.stringify({
+          ...obj,
+          items: { ...itemize },
+          name: "Receipt",
+          date: new Date().toDateString(),
+        }),
+        userid: u,
+      });
+    });
+    axios
+      .all(allreq)
+      .then((data) => {
+        setloading(false);
+        handleCancel();
+        navigation.navigate("Join Bill");
+      })
+      .catch((err) => {
+        setloading(false);
+        console.log(err);
+      });
   };
 
   const handleChange = (val, title) => {
@@ -121,6 +162,7 @@ const ReceiptDetails = ({ setshowdetails, navigation }) => {
           handleSave={handleSave}
           setshowtax={setshowtax}
           showtax={showtax}
+          handleSaveAndShare={handleSaveAndShare}
         />
       )}
     </>

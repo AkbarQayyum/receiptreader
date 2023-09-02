@@ -104,8 +104,8 @@ const Drawers = () => {
           <Drawer.Screen
             name="Join Bill"
             options={{
-              drawerLabel: "Join Bill",
-              title: "Join Bill",
+              drawerLabel: "Payable",
+              title: "Payable",
               drawerIcon: () => (
                 <Ionicons name="receipt-outline" size={20} color="#808080" />
               ),

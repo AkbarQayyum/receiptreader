@@ -15,6 +15,7 @@ const TaxandTip = ({
   showtax,
   handleCancel,
   handleSave,
+  handleSaveAndShare,
 }) => {
   const [calc, setcalc] = useState();
   const [subt, setsubt] = useState("0");
@@ -134,9 +135,11 @@ const TaxandTip = ({
           />
         </View>
       </View>
-      <View style={tw`flex-row justify-between items-center w-full px-2`}>
+      <View
+        style={tw`flex-row justify-between items-center gap-3 w-full px-2 flex-wrap`}
+      >
         <Button
-          style={tw`px-5 w-[40] `}
+          style={tw`px-5 w-[45] `}
           backgroundColor={"272829"}
           onPress={() => {
             handleSave({
@@ -151,9 +154,35 @@ const TaxandTip = ({
           Save
         </Button>
         <Button
-          style={tw`px-5 w-[40] `}
+          style={tw`px-5 w-[45] `}
+          backgroundColor={"272829"}
+          onPress={() => {
+            handleSaveAndShare(
+              {
+                ...taxvalue,
+                subtotal: subt,
+                grandtotal: gtotal,
+              },
+              data
+            );
+          }}
+        >
+          Save & Share
+        </Button>
+        <Button
+          style={tw`px-5 w-full `}
           backgroundColor={"#61677A"}
-          onPress={handleCancel}
+          onPress={() => {
+            setsubt("0");
+            setgtotal("0");
+            settaxvalue({
+              includedtip: "0",
+              tip: "0",
+              discount: "0",
+              tax: "0",
+            });
+            handleCancel();
+          }}
         >
           Cancel
         </Button>

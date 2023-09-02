@@ -3,7 +3,6 @@ import { dummydata } from "../../utils/dummy";
 
 const initialState = {
   data: dummydata,
- 
 };
 
 export const handleDummyData = createSlice({
@@ -11,14 +10,17 @@ export const handleDummyData = createSlice({
   initialState,
   reducers: {
     AddField: (state, action) => {
-     let val   = JSON.parse(JSON.stringify(state.data))
-     console.log(action.payload)
-     val = {...val,[action.payload.title]:action.payload.value}
-     console.log(val)
-     state.data = val
+      let val = JSON.parse(JSON.stringify(state.data));
+      console.log(action.payload);
+      val = { ...val, [action.payload.title]: action.payload.value };
+      console.log(val);
+      state.data = val;
+    },
+    handleReset: (state, action) => {
+      state.data = dummydata;
     },
   },
 });
 export const getdummydata = (state) => state.handleDummyData;
-export const { AddField } = handleDummyData.actions;
+export const { AddField, handleReset } = handleDummyData.actions;
 export default handleDummyData.reducer;

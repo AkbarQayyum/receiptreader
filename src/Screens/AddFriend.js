@@ -38,7 +38,9 @@ const AddFriend = () => {
   return (
     <ScrollView contentContainerStyle={tw`flex gap-2 p-2 h-full w-full`}>
       <View>
-        <Button onPress={() => setOpen(true)}>Add Friend</Button>
+        <Button backgroundColor={"272829"} onPress={() => setOpen(true)}>
+          Add Friend
+        </Button>
         {open ? (
           <AddFriendModal
             open={open}
