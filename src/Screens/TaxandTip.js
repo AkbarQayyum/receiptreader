@@ -16,6 +16,8 @@ const TaxandTip = ({
   handleCancel,
   handleSave,
   handleSaveAndShare,
+
+  handleSelectFriend,
 }) => {
   const [calc, setcalc] = useState();
   const [subt, setsubt] = useState("0");
@@ -157,7 +159,7 @@ const TaxandTip = ({
           style={tw`px-5 w-[45] `}
           backgroundColor={"272829"}
           onPress={() => {
-            handleSaveAndShare(
+            handleSelectFriend(
               {
                 ...taxvalue,
                 subtotal: subt,

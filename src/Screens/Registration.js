@@ -37,9 +37,18 @@ const Registration = ({ navigation }) => {
     console.log(res.data);
     if (res.data.isSuccess) {
       setloading(false);
+      Toast.show({
+        type: "success",
+        text1: "User Register Successfully",
+      });
       navigation.navigate("Login");
+    } else {
+      Toast.show({
+        type: "error",
+        text1: "Something went wrong.",
+      });
+      setloading(false);
     }
-    setloading(false);
   };
   return (
     <>
@@ -56,11 +65,6 @@ const Registration = ({ navigation }) => {
             control={control}
             rules={{
               required: "Username is Required",
-              pattern: {
-                value: userNameRegEx,
-                message:
-                  "Please enter One Uppercase one Lowercase letter and one number min length 5 and max length 18",
-              },
             }}
             render={({ field }) => (
               <>

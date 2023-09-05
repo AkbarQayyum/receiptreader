@@ -1,4 +1,10 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useState } from "react";
 import tw from "twrnc";
 import { Button } from "native-base";
@@ -12,6 +18,7 @@ import { Camera, CameraType } from "expo-camera";
 import * as Permissions from "expo-permissions";
 import { useEffect } from "react";
 import { MaterialCommunityIcons } from "react-native-vector-icons";
+import { useIsFocused } from "@react-navigation/native";
 // fake test API "https://fakestoreapi.com/products/1"
 
 // const API_URL = `http://www.cogsense.ai:8501/`;
@@ -25,6 +32,14 @@ const HomeScreen = ({ navigation }) => {
   const [camera, setCamera] = useState(null);
   const [opencamera, setOpenCamera] = useState(false);
   const [showdetails, setshowdetails] = useState(false);
+  const isFocus = useIsFocused();
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => <View style={tw`p-3`}></View>,
+    });
+  }, [isFocus]);
+
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({

@@ -93,7 +93,7 @@ const Drawers = () => {
           <Drawer.Screen
             name="AllReceipt"
             options={{
-              drawerLabel: "AllReceipt",
+              drawerLabel: "All Receipt",
               title: "AllReceipt",
               drawerIcon: () => (
                 <Ionicons name="receipt" size={20} color="#808080" />

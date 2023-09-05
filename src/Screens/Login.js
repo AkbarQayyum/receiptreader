@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getLoginProps, setIsLogin } from "../../Redux/Slices/UserSessionSlice";
 import { useIsFocused } from "@react-navigation/native";
 import { Controller, useForm } from "react-hook-form";
+import Toast from "react-native-toast-message";
 const Login = ({ navigation }) => {
   const [data, setdata] = useState({});
   const { isLogin } = useSelector(getLoginProps);
@@ -32,9 +33,7 @@ const Login = ({ navigation }) => {
     control,
   } = useForm();
   // writing RegEx for input feilds
-  const userNameRegEx = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{5,18}$/;
-  const passwordRegEx =
-    /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+
   const handleLogin = async (data) => {
     console.log(data);
 
@@ -44,10 +43,19 @@ const Login = ({ navigation }) => {
     console.log(res.data);
     if (res.data.isSuccess) {
       setloading(false);
+      Toast.show({
+        type: "success",
+        text1: "User Login Successfully",
+      });
       navigation.navigate("Home");
       dispatch(setIsLogin(res?.data?.user));
+    } else {
+      Toast.show({
+        type: "error",
+        text1: "Username or password does not match",
+      });
+      setloading(false);
     }
-    setloading(false);
   };
   useEffect(() => {
     if (isLogin) {
@@ -69,11 +77,6 @@ const Login = ({ navigation }) => {
             control={control}
             rules={{
               required: "UserName is Required",
-              pattern: {
-                value: userNameRegEx,
-                message:
-                  "Please enter One Uppercase one Lowercase letter and one number min length 5 and max length 18",
-              },
             }}
             render={({ field }) => (
               <>
@@ -103,11 +106,6 @@ const Login = ({ navigation }) => {
             control={control}
             rules={{
               required: "Password is Required",
-              pattern: {
-                value: passwordRegEx,
-                message:
-                  "Password must contain at least one uppercase letter, one lowercase letter, one digit, one special character, and be at least 8 characters long",
-              },
             }}
             render={({ field }) => (
               <>
@@ -136,7 +134,7 @@ const Login = ({ navigation }) => {
         <View style={tw`w-full`}>
           <Button
             style={tw`w-full `}
-            backgroundColor={'272829'}
+            backgroundColor={"272829"}
             onPress={handleSubmit(handleLogin)}
           >
             Login

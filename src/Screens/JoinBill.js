@@ -70,7 +70,11 @@ const JoinBill = () => {
                     handleDelete(t);
                   }}
                 >
-                  <AntDesign name={"delete"} size={25} />
+                  <AntDesign
+                    name={"delete"}
+                    size={25}
+                    color={"#272829"}
+                  />
                 </Pressable>
                 <View>
                   <Button backgroundColor={"272829"}>Pay</Button>

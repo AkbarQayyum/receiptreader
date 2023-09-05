@@ -8,23 +8,31 @@ import { useDispatch, useSelector } from "react-redux";
 import { getdummydata, handleReset } from "../../Redux/Slices/handleDummyData";
 import { useEffect } from "react";
 import { useState } from "react";
+import Toast from "react-native-toast-message";
 import axiosInstance from "../../utils/axiosinstance";
 import Loader from "../components/Loader/Loader";
 import AddFieldValue from "../components/AddFieldModal";
 import { useIsFocused } from "@react-navigation/native";
 import TaxandTip from "./TaxandTip";
 import { getLoginProps } from "../../Redux/Slices/UserSessionSlice";
-import axios from "axios";
+import axios, { all } from "axios";
+import SaveAndShareModal from "../components/SaveAndShareModal";
 const ReceiptDetails = ({ setshowdetails, navigation }) => {
   const { data } = useSelector(getdummydata);
   const { user } = useSelector(getLoginProps);
   const [dummy, setdummy] = useState({});
   const [open, setOpen] = useState(false);
   const isFocus = useIsFocused();
+
   const [showtax, setshowtax] = useState(false);
   const [loading, setloading] = useState(false);
+  const [selectfriend, setselectfriend] = useState(false);
+  const [selectedfriendsid, setseletedfriendsid] = useState([]);
+  const [itemsvalues, setitemsvalue] = useState({});
+  const [dt, setdt] = useState({});
+
   const dispatch = useDispatch();
-  console.log(data);
+
   const handleCancel = () => {
     setshowdetails(false);
     dispatch(handleReset());
@@ -32,33 +40,40 @@ const ReceiptDetails = ({ setshowdetails, navigation }) => {
 
   useEffect(() => {
     setdummy(data);
-    console.log(data);
   }, [data]);
 
   const handleSave = async (values) => {
-    console.log(values);
     setloading(true);
     let obj = { ...values, items: dummy };
     const res = await axiosInstance.post("/users/auth/receipt", {
       items: JSON.stringify(obj),
       userid: user?._id,
     });
-    console.log(res?.data);
+
     if (res.data?.isSuccess === true) {
+      Toast.show({
+        type: "success",
+        text1: "Receipt Saved Successfully",
+      });
       navigation.navigate("AllReceipt");
+      setshowdetails(false);
+    } else {
+      Toast.show({
+        type: "error",
+        text1: "Something went wrong",
+      });
+      setloading(false);
     }
-    setloading(false);
   };
 
-  const handleSaveAndShare = (values, dt) => {
+  const handleSaveAndShare = (allselecteduser) => {
     setloading(true);
     let friendlength = user?.friends?.length;
-    let allusers = [...user?.friends, user?._id];
-    console.log(allusers);
+    let allusers = [...allselecteduser];
     let obj = {};
     let itemize = {};
-    Object.keys(values)?.map((d) => {
-      obj = { ...obj, [d]: parseInt(values[d] / (friendlength + 1)) };
+    Object.keys(itemsvalues)?.map((d) => {
+      obj = { ...obj, [d]: parseInt(itemsvalues[d] / (friendlength + 1)) };
     });
     Object.keys(dt)?.map((d) => {
       itemize = { ...itemize, [d]: parseInt(dt[d] / (friendlength + 1)) };
@@ -79,17 +94,32 @@ const ReceiptDetails = ({ setshowdetails, navigation }) => {
       .all(allreq)
       .then((data) => {
         setloading(false);
+        Toast.show({
+          type: "success",
+          text1: "Receipt Saved Successfully",
+        });
         handleCancel();
+        setshowdetails(false);
         navigation.navigate("Join Bill");
       })
       .catch((err) => {
+        Toast.show({
+          type: "error",
+          text1: "something went wrong",
+        });
         setloading(false);
-        console.log(err);
       });
   };
 
   const handleChange = (val, title) => {
     setdummy({ ...dummy, [title]: val });
+  };
+
+  const handleSelectFriend = (values, dat) => {
+    setitemsvalue(values);
+    setdt(dat);
+
+    setselectfriend(true);
   };
 
   useEffect(() => {
@@ -163,8 +193,16 @@ const ReceiptDetails = ({ setshowdetails, navigation }) => {
           setshowtax={setshowtax}
           showtax={showtax}
           handleSaveAndShare={handleSaveAndShare}
+          handleSelectFriend={handleSelectFriend}
         />
       )}
+      {selectfriend ? (
+        <SaveAndShareModal
+          selectfriend={selectfriend}
+          setselectfriend={setselectfriend}
+          handleSaveAndShare={handleSaveAndShare}
+        />
+      ) : null}
     </>
   );
 };

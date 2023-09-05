@@ -66,7 +66,7 @@ const AllReceipt = () => {
                     handleDelete(t?._id);
                   }}
                 >
-                  <AntDesign name={"delete"} size={25} color={"red"} />
+                  <AntDesign name={"delete"} size={25} color={"#272829"} />
                 </Pressable>
               </View>
             </Pressable>
