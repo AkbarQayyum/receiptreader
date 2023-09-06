@@ -14,7 +14,7 @@ const AddFieldValue = ({ open, setOpen }) => {
     setvalue({ ...value, [title]: val });
   };
   const handleSave = () => {
-    console.log(value);
+   
     dispatch(AddField(value));
     handleClose()
   };
@@ -63,7 +63,7 @@ const AddFieldValue = ({ open, setOpen }) => {
               </Button>
               <Button
                 style={tw`w-[20]`}
-                backgroundColor={"272829"}
+                backgroundColor={"#272829"}
                 onPress={handleSave}
               >
                 Save

@@ -26,17 +26,17 @@ const JoinBill = () => {
 
   const getData = async () => {
     let d = await axiosInstance.post("/users/auth/payable", { id: user?._id });
-    console.log(d?.data);
+
     let val = d?.data?.map((data) => {
       return JSON.parse(data);
     });
-    console.log(val);
+   
     setallreceipts(val);
     setloading(false);
   };
 
   const handleDelete = async (va) => {
-    console.log(va);
+    
     const res = await axiosInstance.post(`/friend/removereceipt`, {
       userid: user?._id,
       receipt: JSON.stringify(va),
@@ -77,7 +77,7 @@ const JoinBill = () => {
                   />
                 </Pressable>
                 <View>
-                  <Button backgroundColor={"272829"}>Pay</Button>
+                  <Button backgroundColor={"#272829"}>Pay</Button>
                 </View>
               </View>
             </Pressable>

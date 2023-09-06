@@ -21,11 +21,11 @@ const SaveAndShareModal = ({
   const handleSelect = (val) => {
     if (selected?.includes(val)) {
       let values = selected?.filter((f) => f !== val);
-      console.log(values);
+      
       setseleted(values);
     } else {
       let values = [...selected, val];
-      console.log(values);
+  
       setseleted(values);
     }
   };

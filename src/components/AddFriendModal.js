@@ -21,24 +21,24 @@ const AddFriendModal = ({ open, setOpen, getuserfriend }) => {
   const [data, setdata] = useState([]);
   const [name, setname] = useState("");
   const { user } = useSelector(getLoginProps);
-  console.log(user);
+
   const [loading, setloading] = useState(false);
   const searchfriend = async () => {
     setloading(true);
     const res = await axiosInstance.post("/friend/search", { name: name });
-    console.log(res);
+   
     setdata(res?.data);
     setloading(false);
   };
 
   const addFriends = async (id) => {
-    console.log(id);
+    
     setloading(true);
     const res = await axiosInstance.post("/friend/add", {
       userid: user?._id,
       friendid: id,
     });
-    console.log(res);
+ 
     setloading(false);
     getuserfriend();
     handleClose();

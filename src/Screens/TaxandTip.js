@@ -28,7 +28,7 @@ const TaxandTip = ({
     includedtip: "0",
     tip: "0",
     discount: "0",
-    tax: "0",
+    tax:data['TAX'],
   });
 
   const handleChange = (val, title) => {
@@ -38,19 +38,19 @@ const TaxandTip = ({
   useEffect(() => {
     let sum = 0;
     Object.keys(taxvalue)?.map((d) => {
-      sum = sum + parseInt(taxvalue[d]);
+      sum = sum + parseFloat(taxvalue[d]);
     });
-    console.log(sum);
-    setgtotal((sum + parseInt(subt)).toString());
+  
+    setgtotal((sum + parseFloat(subt)).toString());
   }, [taxvalue]);
   useEffect(() => {
     let sum = 0;
     Object.keys(data)?.map((d) => {
-      sum = sum + parseInt(data[d]);
+      sum = sum + parseFloat(data[d]);
     });
-    setsubt(sum?.toString());
-    setgtotal(sum?.toString());
-    console.log(sum);
+    setsubt(data['SUBTOTAL']?.toString());
+    setgtotal(data['TOTAL']);
+   
   }, [isFocus, data]);
   return (
     <ScrollView contentContainerStyle={tw`items-center p-2 gap-5`}>

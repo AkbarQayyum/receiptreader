@@ -24,7 +24,7 @@ const Registration = ({ navigation }) => {
   const [data, setdata] = useState({});
   const [loading, setloading] = useState(false);
   const handleChange = (text, title) => {
-    console.log(text, title);
+  
     setdata({ ...data, [title]: text });
   };
   const handleNavigate = () => {
@@ -32,9 +32,9 @@ const Registration = ({ navigation }) => {
   };
   const handleSubmits = async () => {
     setloading(true);
-    console.log(data);
+    
     let res = await axiosInstance.post("/users/auth/register", data);
-    console.log(res.data);
+   
     if (res.data.isSuccess) {
       setloading(false);
       Toast.show({

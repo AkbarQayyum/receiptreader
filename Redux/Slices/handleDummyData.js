@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { dummydata } from "../../utils/dummy";
 
 const initialState = {
-  data: dummydata,
+  data: {},
 };
 
 export const handleDummyData = createSlice({
@@ -11,10 +11,14 @@ export const handleDummyData = createSlice({
   reducers: {
     AddField: (state, action) => {
       let val = JSON.parse(JSON.stringify(state.data));
-      console.log(action.payload);
+
       val = { ...val, [action.payload.title]: action.payload.value };
-      console.log(val);
+
       state.data = val;
+    },
+    addapidata: (state, action) => {
+      console.log(action.payload);
+      state.data = { ...state?.data, ...action?.payload };
     },
     handleReset: (state, action) => {
       state.data = dummydata;
@@ -22,5 +26,5 @@ export const handleDummyData = createSlice({
   },
 });
 export const getdummydata = (state) => state.handleDummyData;
-export const { AddField, handleReset } = handleDummyData.actions;
+export const { AddField, handleReset, addapidata } = handleDummyData.actions;
 export default handleDummyData.reducer;

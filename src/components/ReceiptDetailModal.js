@@ -4,7 +4,7 @@ import { Modal } from "native-base";
 import tw from "twrnc";
 import { AntDesign, FontAwesome } from "react-native-vector-icons";
 const ReceiptDetailModal = ({ open, setOpen, selected }) => {
-  console.log(selected.items);
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -17,7 +17,7 @@ const ReceiptDetailModal = ({ open, setOpen, selected }) => {
       //   initialFocusRef={initialRef}
       //   finalFocusRef={finalRef}
     >
-      <Modal.Content style={{ maxHeight: 600 }}>
+      <Modal.Content style={{ maxHeight: 500 ,width:'100%'}}>
         <Modal.CloseButton />
         <Modal.Header>Receipt Details</Modal.Header>
         <Modal.Body>
@@ -40,10 +40,14 @@ const ReceiptDetailModal = ({ open, setOpen, selected }) => {
                 if (d !== "items" && d !== "_id") {
                   return (
                     <View
-                      style={tw`w-full flex-row justify-between items-center px-1`}
+                      style={tw`w-full flex-row justify-between items-start px-1 gap-3`}
                     >
-                      <Text>{d}</Text>
-                      <Text>{selected?.items[d]}</Text>
+                      <Text style={tw`overflow-hidden  text-ellipsis`}>
+                        {d}
+                      </Text>
+                      <Text style={tw`overflow-hidden  text-ellipsis text-right`}>
+                        {selected?.items[d]}
+                      </Text>
                     </View>
                   );
                 }

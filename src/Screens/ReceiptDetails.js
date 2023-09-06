@@ -166,22 +166,16 @@ const ReceiptDetails = ({ setshowdetails, navigation }) => {
               );
             })}
           </View>
-          {/* <View style={tw`flex-row justify-between items-center w-full px-2`}>
+          <View style={tw`flex-row justify-between items-center w-full px-2`}>
+           
             <Button
-              style={tw`px-5 w-[40] `}
-              backgroundColor={"272829"}
-              onPress={handleSave}
-            >
-              Save
-            </Button>
-            <Button
-              style={tw`px-5 w-[40] `}
+              style={tw`px-5 w-full `}
               backgroundColor={"#61677A"}
               onPress={handleCancel}
             >
               Cancel
             </Button>
-          </View> */}
+          </View>
           {loading ? <Loader /> : null}
           {open ? <AddFieldValue open={open} setOpen={setOpen} /> : null}
         </ScrollView>

@@ -20,18 +20,17 @@ const AllReceipt = () => {
   const isFocus = useIsFocused();
   useEffect(() => {
     setloading(true);
-    console.log("sd");
     getData();
   }, [isFocus]);
 
   const getData = () => {
     axiosInstance.get(`/users/auth/receipt/${user?._id}`).then((res) => {
-      console.log(res.data);
+    
       setloading(false);
       const val = res.data?.map((d) => {
         return { ...JSON.parse(d.items), _id: d?._id };
       });
-      console.log(val);
+      
       setallreceipts(val);
     });
   };

@@ -8,7 +8,7 @@ import { Button } from "native-base";
 const Profile = ({navigation}) => {
   const { user } = useSelector(getLoginProps);
   const dispatch = useDispatch()
-  console.log(user);
+ 
   const handleLogout = ()=>{
   dispatch(setIsLogout());
 //   navigation.navigate('Login')

@@ -17,7 +17,7 @@ import ReceiptDetails from "./src/Screens/ReceiptDetails";
 const Routes = () => {
   const { isLogin } = useSelector(getLoginProps);
   const [check, setcheck] = useState(false);
-  console.log(check, " Routes check");
+ 
   useEffect(() => {
     setcheck(isLogin);
   }, [isLogin]);

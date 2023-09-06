@@ -17,13 +17,16 @@ import CameraModal from "../components/CameraModal";
 import { Camera, CameraType } from "expo-camera";
 import * as Permissions from "expo-permissions";
 import { useEffect } from "react";
-import { MaterialCommunityIcons } from "react-native-vector-icons";
+import { MaterialCommunityIcons, AntDesign } from "react-native-vector-icons";
 import { useIsFocused } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+import { addapidata } from "../../Redux/Slices/handleDummyData";
+import Loader from "../components/Loader/Loader";
 // fake test API "https://fakestoreapi.com/products/1"
 
 // const API_URL = `http://www.cogsense.ai:8501/`;
 const API_URL = `https://fakestoreapi.com/products/1`;
-console.log(API_URL, " api call function");
+
 const HomeScreen = ({ navigation }) => {
   const [image, setImage] = useState(null);
   const [scanImage, setScanImage] = useState();
@@ -31,9 +34,11 @@ const HomeScreen = ({ navigation }) => {
   const [hasCameraPermission, setCameraPermission] = useState(null);
   const [camera, setCamera] = useState(null);
   const [opencamera, setOpenCamera] = useState(false);
+  const [loading, setloading] = useState(false);
+
   const [showdetails, setshowdetails] = useState(false);
   const isFocus = useIsFocused();
-
+  const dispatch = useDispatch();
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => <View style={tw`p-3`}></View>,
@@ -47,11 +52,11 @@ const HomeScreen = ({ navigation }) => {
       allowsEditing: true,
       aspect: [4, 6],
       quality: 1,
-      base64: true,
+      // base64: true,
     });
     let base64Img = `data:image/jpg;base64,${result.assets[0].base64}`;
 
-    setImage(base64Img);
+    setImage(result.assets[0]);
     setOpen(false);
   };
 
@@ -61,7 +66,38 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const uploadImage = async () => {
-    setshowdetails(true);
+    setloading(true);
+    const config = {
+      headers: {
+        "Content-Type": "multipart/form-data", // Set the content type to JSON
+      },
+    };
+    const formdata = new FormData();
+    formdata.append("file", {
+      uri: image?.uri,
+      name: image?.uri?.split("ImagePicker/")[1],
+      type: "image/png",
+      fileName: "image1",
+    });
+
+    const res = await axios.post(
+      "http://3.131.184.34/UploadImage",
+      formdata,
+      config
+    );
+
+    if (res.data) {
+      let value = res?.data?.info?.split("'")[1];
+
+      let re = await axios.post(
+        `http://3.131.184.34/ReceiptAnalysis?filename=${value}`
+      );
+      setloading(false);
+
+      setshowdetails(true);
+      dispatch(addapidata(re?.data?.data));
+    }
+    setloading(false);
   };
 
   useEffect(() => {
@@ -74,7 +110,7 @@ const HomeScreen = ({ navigation }) => {
     if (camera) {
       const photo = await camera.takePictureAsync();
 
-      setImage(photo?.uri);
+      setImage(photo);
       setOpenCamera(false);
       // You can now do something with the captured photo, like displaying it or uploading it.
     }
@@ -94,7 +130,7 @@ const HomeScreen = ({ navigation }) => {
         >
           {image ? (
             <Image
-              source={{ uri: image ? image : null }}
+              source={{ uri: image ? image?.uri : null }}
               style={{ width: 300, height: 400 }}
             />
           ) : null}
@@ -163,7 +199,7 @@ const HomeScreen = ({ navigation }) => {
             ref={(ref) => setCamera(ref)}
           >
             <View
-              style={tw`border-2 border-gray-300 flex-1 w-full items-center justify-end p-2`}
+              style={tw` flex-1 w-full items-center justify-end p-2 relative`}
             >
               <TouchableOpacity style={tw`p-2 bg-black`} onPress={takePicture}>
                 <MaterialCommunityIcons
@@ -172,6 +208,9 @@ const HomeScreen = ({ navigation }) => {
                   color={"#fff"}
                 />
               </TouchableOpacity>
+              <Pressable style={tw`absolute top-2 right-1`} onPress={()=>setOpenCamera(false)}>
+              <AntDesign name={'close'} color={'white'} size={40} />
+              </Pressable>
             </View>
           </Camera>
         </View>
@@ -185,6 +224,7 @@ const HomeScreen = ({ navigation }) => {
           pickImage={pickImage}
         />
       ) : null}
+      {loading ? <Loader /> : null}
     </>
   );
 };

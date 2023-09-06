@@ -18,7 +18,7 @@ const Login = ({ navigation }) => {
   const isFocused = useIsFocused();
   const [loading, setloading] = useState(false);
   const handleChange = (text, title) => {
-    console.log(text, title);
+   
     setdata({ ...data, [title]: text });
   };
   const handleNavigate = () => {
@@ -35,12 +35,12 @@ const Login = ({ navigation }) => {
   // writing RegEx for input feilds
 
   const handleLogin = async (data) => {
-    console.log(data);
+    
 
     setloading(true);
 
     let res = await axiosInstance.post("/users/auth/login/", data);
-    console.log(res.data);
+
     if (res.data.isSuccess) {
       setloading(false);
       Toast.show({
