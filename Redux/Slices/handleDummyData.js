@@ -17,7 +17,7 @@ export const handleDummyData = createSlice({
       state.data = val;
     },
     addapidata: (state, action) => {
-      console.log(action.payload);
+   
       state.data = { ...state?.data, ...action?.payload };
     },
     handleReset: (state, action) => {

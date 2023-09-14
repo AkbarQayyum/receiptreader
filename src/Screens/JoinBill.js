@@ -6,11 +6,10 @@ import Loader from "../components/Loader/Loader";
 import { ScrollView } from "react-native-gesture-handler";
 import axiosInstance from "../../utils/axiosinstance";
 import { AntDesign } from "react-native-vector-icons";
-import axios from "axios";
 import { Button, Pressable } from "native-base";
-import ReceiptDetailModal from "../components/ReceiptDetailModal";
 import { useSelector } from "react-redux";
 import { getLoginProps } from "../../Redux/Slices/UserSessionSlice";
+import ViewPayableBills from "../components/ViewPayableBill";
 const JoinBill = () => {
   const [allreceipts, setallreceipts] = useState([]);
   const [loading, setloading] = useState(false);
@@ -70,11 +69,7 @@ const JoinBill = () => {
                     handleDelete(t);
                   }}
                 >
-                  <AntDesign
-                    name={"delete"}
-                    size={25}
-                    color={"#272829"}
-                  />
+                  <AntDesign name={"delete"} size={25} color={"#272829"} />
                 </Pressable>
                 <View>
                   <Button backgroundColor={"#272829"}>Pay</Button>
@@ -86,7 +81,7 @@ const JoinBill = () => {
       )}
       {loading ? <Loader /> : null}
       {open ? (
-        <ReceiptDetailModal open={open} setOpen={setOpen} selected={selected} />
+        <ViewPayableBills open={open} setOpen={setOpen} selected={selected} />
       ) : null}
     </ScrollView>
   );

@@ -11,7 +11,7 @@ import { Pressable } from "native-base";
 import ReceiptDetailModal from "../components/ReceiptDetailModal";
 import { useSelector } from "react-redux";
 import { getLoginProps } from "../../Redux/Slices/UserSessionSlice";
-const AllReceipt = () => {
+const AllReceipt = ({navigation}) => {
   const [allreceipts, setallreceipts] = useState([]);
   const [loading, setloading] = useState(false);
   const [open, setOpen] = useState(false);
@@ -30,7 +30,7 @@ const AllReceipt = () => {
       const val = res.data?.map((d) => {
         return { ...JSON.parse(d.items), _id: d?._id };
       });
-      
+
       setallreceipts(val);
     });
   };
@@ -74,7 +74,13 @@ const AllReceipt = () => {
       )}
       {loading ? <Loader /> : null}
       {open ? (
-        <ReceiptDetailModal open={open} setOpen={setOpen} selected={selected} />
+        <ReceiptDetailModal
+          open={open}
+          setOpen={setOpen}
+          selected={selected}
+          handleDelete={handleDelete}
+          navigation={navigation}
+        />
       ) : null}
     </ScrollView>
   );

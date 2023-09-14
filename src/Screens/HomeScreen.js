@@ -22,6 +22,8 @@ import { useIsFocused } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { addapidata } from "../../Redux/Slices/handleDummyData";
 import Loader from "../components/Loader/Loader";
+import Toast from "react-native-toast-message";
+
 // fake test API "https://fakestoreapi.com/products/1"
 
 // const API_URL = `http://www.cogsense.ai:8501/`;
@@ -72,32 +74,85 @@ const HomeScreen = ({ navigation }) => {
         "Content-Type": "multipart/form-data", // Set the content type to JSON
       },
     };
-    const formdata = new FormData();
-    formdata.append("file", {
+    const formdata = await new FormData();
+    await formdata.append("file", {
       uri: image?.uri,
       name: image?.uri?.split("ImagePicker/")[1],
       type: "image/png",
       fileName: "image1",
     });
 
-    const res = await axios.post(
-      "http://3.131.184.34/UploadImage",
-      formdata,
-      config
-    );
+    // await axios
+    //   .post("http://3.131.184.34/UploadImage", formdata, config)
+    //   .then(async (res) => {
+    //     let value = res?.data?.info?.split("'")[1];
+    //     console.log(res.data);
+    //     console.log(value);
+    //     await axios
+    //       .post(`http://3.131.184.34/ReceiptAnalysis?filename=${value}`)
+    //       .then((resu) => {
+    //         setloading(false);
 
-    if (res.data) {
-      let value = res?.data?.info?.split("'")[1];
+    //         setshowdetails(true);
+    //         dispatch(addapidata(resu?.data?.data));
+    //       })
+    //       .catch((err) => {
+    //         console.log(err);
+    //         Toast.show({
+    //           type: "error",
+    //           text1:
+    //             "something went wrong in image uploading receipt file name",
+    //         });
 
-      let re = await axios.post(
-        `http://3.131.184.34/ReceiptAnalysis?filename=${value}`
-      );
-      setloading(false);
+    //         setloading(false);
+    //         setshowdetails(true);
+    //       });
+    //   })
+    //   .catch((err) => {
+    //     Toast.show({
+    //       type: "error",
+    //       text1: "something went wrong",
+    //     });
+    //     return setloading(false);
+    //   });
 
-      setshowdetails(true);
-      dispatch(addapidata(re?.data?.data));
-    }
-    setloading(false);
+    await fetch("https://receipt.cogsense.ai/UploadImage", {
+      method: "POST",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      body: formdata,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        let value = data?.info?.split("'")[1];
+        axios
+          .post(`https://receipt.cogsense.ai/ReceiptAnalysis?filename=${value}`)
+          .then((resu) => {
+            setloading(false);
+
+            setshowdetails(true);
+            dispatch(addapidata(resu?.data?.data));
+          })
+          .catch((err) => {
+            Toast.show({
+              type: "error",
+              text1:
+                "something went wrong in image uploading receipt file name",
+            });
+
+            setloading(false);
+            setshowdetails(true);
+          });
+      })
+      .catch((error) => {
+        Toast.show({
+          type: "error",
+          text1: "something went wrong ",
+        });
+
+        setloading(false);
+      });
   };
 
   useEffect(() => {
@@ -208,8 +263,11 @@ const HomeScreen = ({ navigation }) => {
                   color={"#fff"}
                 />
               </TouchableOpacity>
-              <Pressable style={tw`absolute top-2 right-1`} onPress={()=>setOpenCamera(false)}>
-              <AntDesign name={'close'} color={'white'} size={40} />
+              <Pressable
+                style={tw`absolute top-2 right-1`}
+                onPress={() => setOpenCamera(false)}
+              >
+                <AntDesign name={"close"} color={"white"} size={40} />
               </Pressable>
             </View>
           </Camera>
