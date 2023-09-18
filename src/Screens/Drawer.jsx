@@ -14,6 +14,7 @@ import AllReceipt from "./AllReceipt";
 import { SimpleLineIcons } from '@expo/vector-icons'
 import JoinBill from './JoinBill';
 import AddFriend from './AddFriend';
+import Notifications from './Notifications';
 
 const Drawer = createDrawerNavigator();
 
@@ -123,6 +124,17 @@ const Drawers = () => {
               ),
             }}
             component={AddFriend}
+          />
+          <Drawer.Screen
+            name="Notifications"
+            options={{
+              drawerLabel: "Notifications",
+              title: "Notifications",
+              drawerIcon: () => (
+                <AntDesign name="notification" size={20} color="#808080" />
+              ),
+            }}
+            component={Notifications}
           />
         </Drawer.Navigator>
         {/* </NavigationContainer> */}

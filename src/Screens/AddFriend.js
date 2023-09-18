@@ -16,7 +16,7 @@ const AddFriend = () => {
   const { user } = useSelector(getLoginProps);
   const getuserfriend = async () => {
     const res = await axiosInstance.post("/friend/get", { id: user?._id });
-   
+
     setfriend(res.data);
   };
 
@@ -25,7 +25,6 @@ const AddFriend = () => {
   }, [isFocus]);
 
   const removeFriend = async (id) => {
-   
     const value = await axiosInstance.post("/friend/removefriend", {
       userid: user?._id,
       friendid: id,

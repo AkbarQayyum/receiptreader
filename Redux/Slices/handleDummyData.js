@@ -10,6 +10,7 @@ export const handleDummyData = createSlice({
   initialState,
   reducers: {
     AddField: (state, action) => {
+      console.log(action.payload)
       let val = JSON.parse(JSON.stringify(state.data));
 
       val = { ...val, [action.payload.title]: action.payload.value };

@@ -6,6 +6,7 @@ import { Button, Input } from "native-base";
 import Loader from "../components/Loader/Loader";
 import axiosInstance from "../../utils/axiosinstance";
 import { Controller, useForm } from "react-hook-form";
+import Toast from "react-native-toast-message";
 
 const Registration = ({ navigation }) => {
   const {
@@ -45,10 +46,12 @@ const Registration = ({ navigation }) => {
     } else {
       Toast.show({
         type: "error",
-        text1: "Something went wrong.",
+        text1: "Username Already exist.",
       });
       setloading(false);
     }
+      setloading(false);
+
   };
   return (
     <>

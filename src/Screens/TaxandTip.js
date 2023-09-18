@@ -28,7 +28,7 @@ const TaxandTip = ({
     includedtip: "0",
     tip: "0",
     discount: "0",
-    tax:data['TAX'],
+    tax: data["TAX"] || "0",
   });
 
   const handleChange = (val, title) => {
@@ -40,22 +40,25 @@ const TaxandTip = ({
     Object.keys(taxvalue)?.map((d) => {
       sum = sum + parseFloat(taxvalue[d]);
     });
-  
+
     setgtotal((sum + parseFloat(subt)).toString());
   }, [taxvalue]);
   useEffect(() => {
+    console.log(data);
     let sum = 0;
     Object.keys(data)?.map((d) => {
       sum = sum + parseFloat(data[d]);
     });
-    setsubt(data['SUBTOTAL']?.toString());
-    setgtotal(data['TOTAL']);
-   
+    setsubt(data["SUBTOTAL"]?.toString() || sum?.toString());
+    setgtotal(data["TOTAL"] || sum?.toString());
   }, [isFocus, data]);
   return (
     <ScrollView contentContainerStyle={tw`items-center p-2 gap-5`}>
       <View style={tw`flex-row justify-between items-center w-full px-2`}>
         <Text style={tw`font-bold text-xl`}>Tax & Tips</Text>
+        <Pressable onPress={() => setshowtax(false)}>
+          <Ionicons name={"arrow-back"} size={25} />
+        </Pressable>
       </View>
       <View style={tw`border-2 w-full p-2 border-gray-300 flex gap-3`}>
         <View

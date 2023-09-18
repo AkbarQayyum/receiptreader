@@ -19,10 +19,12 @@ import * as Permissions from "expo-permissions";
 import { useEffect } from "react";
 import { MaterialCommunityIcons, AntDesign } from "react-native-vector-icons";
 import { useIsFocused } from "@react-navigation/native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addapidata } from "../../Redux/Slices/handleDummyData";
 import Loader from "../components/Loader/Loader";
 import Toast from "react-native-toast-message";
+import { getLoginProps } from "../../Redux/Slices/UserSessionSlice";
+import { getnotifications } from "../../Redux/Slices/NotificationSlice";
 
 // fake test API "https://fakestoreapi.com/products/1"
 
@@ -37,7 +39,7 @@ const HomeScreen = ({ navigation }) => {
   const [camera, setCamera] = useState(null);
   const [opencamera, setOpenCamera] = useState(false);
   const [loading, setloading] = useState(false);
-
+  const { user } = useSelector(getLoginProps);
   const [showdetails, setshowdetails] = useState(false);
   const isFocus = useIsFocused();
   const dispatch = useDispatch();
@@ -146,12 +148,14 @@ const HomeScreen = ({ navigation }) => {
           });
       })
       .catch((error) => {
+        console.log(error);
         Toast.show({
           type: "error",
           text1: "something went wrong ",
         });
 
         setloading(false);
+        return setshowdetails(true);
       });
   };
 
@@ -161,6 +165,24 @@ const HomeScreen = ({ navigation }) => {
       setCameraPermission(status === "granted");
     })();
   }, []);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable
+          style={tw`pr-4 relative`}
+          onPress={() => navigation.navigate("Notifications")}
+        >
+          <AntDesign name={"notification"} color={"white"} size={25} />
+          <View
+            style={tw`h-[2] w-[2] rounded-full absolute bg-red-500 `}
+          ></View>
+        </Pressable>
+      ),
+    });
+    dispatch(getnotifications({ id: user?._id }));
+  }, [isFocus]);
+
   const takePicture = async () => {
     if (camera) {
       const photo = await camera.takePictureAsync();
@@ -243,6 +265,8 @@ const HomeScreen = ({ navigation }) => {
         <ReceiptDetails
           setshowdetails={setshowdetails}
           navigation={navigation}
+          setOpenCamera={setOpenCamera}
+          setImage={setImage}
         />
       ) : null}
 

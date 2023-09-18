@@ -17,7 +17,12 @@ import TaxandTip from "./TaxandTip";
 import { getLoginProps } from "../../Redux/Slices/UserSessionSlice";
 import axios, { all } from "axios";
 import SaveAndShareModal from "../components/SaveAndShareModal";
-const ReceiptDetails = ({ setshowdetails, navigation }) => {
+const ReceiptDetails = ({
+  setshowdetails,
+  navigation,
+  setOpenCamera,
+  setImage,
+}) => {
   const { data } = useSelector(getdummydata);
   const { user } = useSelector(getLoginProps);
   const [dummy, setdummy] = useState({});
@@ -35,6 +40,8 @@ const ReceiptDetails = ({ setshowdetails, navigation }) => {
 
   const handleCancel = () => {
     setshowdetails(false);
+    setOpenCamera(false);
+    setImage(null);
     dispatch(handleReset());
   };
 
@@ -55,8 +62,8 @@ const ReceiptDetails = ({ setshowdetails, navigation }) => {
         type: "success",
         text1: "Receipt Saved Successfully",
       });
-      navigation.navigate("AllReceipt");
-      setshowdetails(false);
+      // navigation.navigate("AllReceipt");
+      handleCancel();
     } else {
       Toast.show({
         type: "error",
@@ -98,8 +105,9 @@ const ReceiptDetails = ({ setshowdetails, navigation }) => {
           type: "success",
           text1: "Receipt Saved Successfully",
         });
+
         handleCancel();
-        setshowdetails(false);
+
         navigation.navigate("Join Bill");
       })
       .catch((err) => {
@@ -122,22 +130,17 @@ const ReceiptDetails = ({ setshowdetails, navigation }) => {
     setselectfriend(true);
   };
 
-  useEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <View style={tw`p-3`}>
-          <Pressable onPress={() => setshowtax((v) => !v)}>
-            <Text style={tw`font-bold text-white text-lg`}>Tax & Tip</Text>
-          </Pressable>
-        </View>
-      ),
-    });
-  }, [isFocus]);
+  
 
   return (
     <>
       {!showtax ? (
         <ScrollView contentContainerStyle={tw`items-center p-2 gap-5`}>
+          <View style={tw`w-full  flex-row justify-end`}>
+            <Pressable onPress={() => setshowtax((v) => !v)}>
+              <Text style={tw`font-bold italic text-[4]`}>Tax & Tip ?</Text>
+            </Pressable>
+          </View>
           <View style={tw`flex-row justify-between items-center w-full px-2`}>
             <Text style={tw`font-bold text-xl`}>Receipt Details</Text>
             <Pressable
@@ -147,6 +150,7 @@ const ReceiptDetails = ({ setshowdetails, navigation }) => {
               <Ionicons name={"add"} size={35} color={"272829"} />
             </Pressable>
           </View>
+
           <View style={tw`border-2 w-full p-2 border-gray-300 flex gap-3`}>
             {Object?.keys(dummy)?.map((v, i) => {
               return (
@@ -167,7 +171,6 @@ const ReceiptDetails = ({ setshowdetails, navigation }) => {
             })}
           </View>
           <View style={tw`flex-row justify-between items-center w-full px-2`}>
-           
             <Button
               style={tw`px-5 w-full `}
               backgroundColor={"#61677A"}

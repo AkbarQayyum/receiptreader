@@ -16,8 +16,9 @@ const ReceiptDetailModal = ({
   open,
   setOpen,
   selected,
-navigation,
+  navigation,
   handleDelete,
+  setshowedit,
 }) => {
   const { user } = useSelector(getLoginProps);
   const [selectedfriend, setselectedfriend] = useState([user?._id]);
@@ -100,6 +101,7 @@ navigation,
         <Modal.Header>Receipt Details</Modal.Header>
         <Modal.Body>
           <ScrollView contentContainerStyle={tw`w-full flex gap-2`}>
+            <View></View>
             {Object.keys(selected)?.map((d, i) => {
               if (d !== "items" && d !== "_id") {
                 return (
@@ -134,6 +136,12 @@ navigation,
               })}
             </ScrollView>
 
+            <Button
+              onPress={() => setshowedit(true)}
+              backgroundColor={"#272829"}
+            >
+              <AntDesign name={"edit"} size={25} color={"white"} />
+            </Button>
             <Button
               onPress={() => setopenfriendselect(true)}
               backgroundColor={"272829"}

@@ -7,7 +7,7 @@ import {
   View,
 } from "react-native";
 import React from "react";
-import { Modal } from "native-base";
+import { Modal, Select } from "native-base";
 import tw from "twrnc";
 import { Input, Button } from "native-base";
 import { Ionicons } from "react-native-vector-icons";
@@ -16,29 +16,39 @@ import axiosInstance from "../../utils/axiosinstance";
 import Loader from "./Loader/Loader";
 import { useSelector } from "react-redux";
 import { getLoginProps } from "../../Redux/Slices/UserSessionSlice";
+import Toast from "react-native-toast-message";
 
 const AddFriendModal = ({ open, setOpen, getuserfriend }) => {
   const [data, setdata] = useState([]);
   const [name, setname] = useState("");
+  const [searchby, setsearchby] = useState("");
   const { user } = useSelector(getLoginProps);
 
   const [loading, setloading] = useState(false);
   const searchfriend = async () => {
     setloading(true);
-    const res = await axiosInstance.post("/friend/search", { name: name });
-   
+    const res = await axiosInstance.post("/friend/search", {
+      name: name,
+      searchby: searchby,
+    });
+
     setdata(res?.data);
+    if (res?.data?.length < 1) {
+      Toast.show({
+        type: "success",
+        text1: "User not found",
+      });
+    }
     setloading(false);
   };
 
   const addFriends = async (id) => {
-    
     setloading(true);
     const res = await axiosInstance.post("/friend/add", {
       userid: user?._id,
       friendid: id,
     });
- 
+
     setloading(false);
     getuserfriend();
     handleClose();
@@ -63,9 +73,28 @@ const AddFriendModal = ({ open, setOpen, getuserfriend }) => {
             <ScrollView contentContainerStyle={tw`w-full flex gap-5 p-2`}>
               <View style={tw`w-full flex gap-2 `}>
                 <Input
-                  placeholder="Search Friend By Name..."
+                  placeholder="Search Friend..."
                   onChangeText={(e) => setname(e)}
                 />
+                <Select
+                  placeholder="Search BY..."
+                  value={searchby}
+                  onValueChange={(e) => setsearchby(e)}
+                  _selectedItem={{
+                    bg: "teal.600",
+                    endIcon: <Ionicons name="checkmark" size="5" />,
+                  }}
+                >
+                  <Select.Item label="Name" value="name">
+                    Name
+                  </Select.Item>
+                  <Select.Item label="Email" value="email">
+                    Email
+                  </Select.Item>
+                  <Select.Item label="Phone" value="phone">
+                    Phone
+                  </Select.Item>
+                </Select>
                 <Button onPress={searchfriend}> Search</Button>
               </View>
               {data?.length > 0 ? (
