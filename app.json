@@ -36,6 +36,13 @@
         {
           "cameraPermission": "Allow $(receiptreader) to access your camera."
         }
+      ],
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": "",
+          "enableGooglePay": true
+        }
       ]
     ]
   }

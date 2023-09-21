@@ -1,19 +1,30 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { Button, Modal } from "native-base";
+import { Button, Modal, useDisclose } from "native-base";
 import tw from "twrnc";
 import { AntDesign, FontAwesome } from "react-native-vector-icons";
-import { useSelector } from "react-redux";
-import { getLoginProps } from "../../Redux/Slices/UserSessionSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { getFriendList, getLoginProps } from "../../Redux/Slices/UserSessionSlice";
 import { useState } from "react";
 import CheckBox from "react-native-check-box";
+import { useIsFocused } from "@react-navigation/native";
+import { useEffect } from "react";
+import axiosInstance from "../../utils/axiosinstance";
 const SaveAndShareModal = ({
   selectfriend,
   setselectfriend,
   handleSaveAndShare,
 }) => {
-  const { user } = useSelector(getLoginProps);
+  const { user, friends } = useSelector(getLoginProps);
+
+  const [friendlist, setfriendlist] = useState(friends);
   const [selected, setseleted] = useState([user?._id]);
+  const isFocus = useIsFocused();
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getFriendList({ id: user?._id }));
+  }, [isFocus]);
+
   const handleClose = () => {
     setselectfriend(false);
   };
@@ -21,17 +32,17 @@ const SaveAndShareModal = ({
   const handleSelect = (val) => {
     if (selected?.includes(val)) {
       let values = selected?.filter((f) => f !== val);
-      
+
       setseleted(values);
     } else {
       let values = [...selected, val];
-  
+
       setseleted(values);
     }
   };
 
   const handleShare = () => {
-    handleSaveAndShare(selected)
+    handleSaveAndShare(selected);
   };
 
   return (
@@ -46,7 +57,7 @@ const SaveAndShareModal = ({
         <Modal.Header>Choose Friends</Modal.Header>
         <Modal.Body>
           <View style={tw`w-full flex gap-2 `}>
-            {user?.friends?.map((f, i) => {
+            {friendlist?.map((f, i) => {
               return (
                 <View key={i} style={tw`flex-row justify-between`}>
                   <Text>{f?.username}</Text>

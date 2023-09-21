@@ -14,7 +14,10 @@ import Loader from "../components/Loader/Loader";
 import AddFieldValue from "../components/AddFieldModal";
 import { useIsFocused } from "@react-navigation/native";
 import TaxandTip from "./TaxandTip";
-import { getLoginProps } from "../../Redux/Slices/UserSessionSlice";
+import {
+  getFriendList,
+  getLoginProps,
+} from "../../Redux/Slices/UserSessionSlice";
 import axios, { all } from "axios";
 import SaveAndShareModal from "../components/SaveAndShareModal";
 const ReceiptDetails = ({
@@ -24,7 +27,7 @@ const ReceiptDetails = ({
   setImage,
 }) => {
   const { data } = useSelector(getdummydata);
-  const { user } = useSelector(getLoginProps);
+  const { user, friends } = useSelector(getLoginProps);
   const [dummy, setdummy] = useState({});
   const [open, setOpen] = useState(false);
   const isFocus = useIsFocused();
@@ -37,6 +40,10 @@ const ReceiptDetails = ({
   const [dt, setdt] = useState({});
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getFriendList({ id: user?._id }));
+  }, [isFocus]);
 
   const handleCancel = () => {
     setshowdetails(false);
@@ -52,6 +59,7 @@ const ReceiptDetails = ({
   const handleSave = async (values) => {
     setloading(true);
     let obj = { ...values, items: dummy };
+ 
     const res = await axiosInstance.post("/users/auth/receipt", {
       items: JSON.stringify(obj),
       userid: user?._id,
@@ -75,16 +83,21 @@ const ReceiptDetails = ({
 
   const handleSaveAndShare = (allselecteduser) => {
     setloading(true);
-    let friendlength = user?.friends?.length;
+    let friendlength = friends?.length;
+    console.log(friendlength)
     let allusers = [...allselecteduser];
     let obj = {};
-    let itemize = {};
+    let itemize = { ...dummy };
     Object.keys(itemsvalues)?.map((d) => {
-      obj = { ...obj, [d]: parseInt(itemsvalues[d] / (friendlength + 1)) };
+      obj = { ...obj, [d]: parseFloat(itemsvalues[d] / (friendlength + 1)) };
     });
     Object.keys(dt)?.map((d) => {
-      itemize = { ...itemize, [d]: parseInt(dt[d] / (friendlength + 1)) };
+      if (!isNaN(dt[d])) {
+        itemize = { ...itemize, [d]: parseFloat(dt[d] / (friendlength + 1)) };
+      }
     });
+
+    console.log({ ...obj, items: { ...itemize } });
 
     const allreq = allusers?.map((u) => {
       return axiosInstance.post("/friend/addreceipt", {
@@ -129,8 +142,6 @@ const ReceiptDetails = ({
 
     setselectfriend(true);
   };
-
-  
 
   return (
     <>

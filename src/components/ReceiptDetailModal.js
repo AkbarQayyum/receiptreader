@@ -53,6 +53,7 @@ const ReceiptDetailModal = ({
         };
       }
     });
+    console.log({ ...obj, items: { ...itemize } });
 
     const allreq = selectedfriend?.map((u) => {
       return axiosInstance.post("/friend/addreceipt", {

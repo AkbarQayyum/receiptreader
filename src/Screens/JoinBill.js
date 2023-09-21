@@ -10,10 +10,12 @@ import { Button, Pressable } from "native-base";
 import { useSelector } from "react-redux";
 import { getLoginProps } from "../../Redux/Slices/UserSessionSlice";
 import ViewPayableBills from "../components/ViewPayableBill";
+import StripeModal from "../components/StripeModal";
 const JoinBill = () => {
   const [allreceipts, setallreceipts] = useState([]);
   const [loading, setloading] = useState(false);
   const [open, setOpen] = useState(false);
+  const [openpayment, setopenPayment] = useState(false);
   const { user } = useSelector(getLoginProps);
   const [selected, setselected] = useState({});
   const isFocus = useIsFocused();
@@ -29,13 +31,12 @@ const JoinBill = () => {
     let val = d?.data?.map((data) => {
       return JSON.parse(data);
     });
-   
+
     setallreceipts(val);
     setloading(false);
   };
 
   const handleDelete = async (va) => {
-    
     const res = await axiosInstance.post(`/friend/removereceipt`, {
       userid: user?._id,
       receipt: JSON.stringify(va),
@@ -72,7 +73,15 @@ const JoinBill = () => {
                   <AntDesign name={"delete"} size={25} color={"#272829"} />
                 </Pressable>
                 <View>
-                  <Button backgroundColor={"#272829"}>Pay</Button>
+                  <Button
+                    backgroundColor={"#272829"}
+                    onPress={() => {
+                      setselected(t);
+                      setopenPayment(true);
+                    }}
+                  >
+                    Pay
+                  </Button>
                 </View>
               </View>
             </Pressable>
@@ -82,6 +91,13 @@ const JoinBill = () => {
       {loading ? <Loader /> : null}
       {open ? (
         <ViewPayableBills open={open} setOpen={setOpen} selected={selected} />
+      ) : null}
+      {openpayment ? (
+        <StripeModal
+          openpayment={openpayment}
+          setopenPayment={setopenPayment}
+          selected={selected}
+        />
       ) : null}
     </ScrollView>
   );

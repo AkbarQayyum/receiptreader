@@ -1,9 +1,21 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import axiosInstance from "../../utils/axiosinstance";
 
 const initialState = {
   isLogin: false,
   user: {},
+  friends: [],
+  status: "idle",
 };
+
+export const getFriendList = createAsyncThunk("getfriend", async ({ id }) => {
+  console.log('asasasdsfd',id);
+  let res = await axiosInstance.post(`/friend/getuserfriendlist/`, {
+    id: id,
+  });
+  console.log('slice data',res.data);
+  return res.data;
+});
 
 export const UserSessionSlice = createSlice({
   name: "UserSessionSlice",
@@ -12,11 +24,25 @@ export const UserSessionSlice = createSlice({
     setIsLogin: (state, action) => {
       state.isLogin = true;
       state.user = action.payload;
+      state.friends = action.payload.friends;
     },
     setIsLogout: (state, action) => {
       state.isLogin = false;
-      state.user ={};
+      state.user = {};
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(getFriendList.pending, (state) => {
+        state.status = "pending";
+      })
+      .addCase(getFriendList.fulfilled, (state, action) => {
+        console.log('api res',action.payload)
+        state.friends = action.payload;
+      })
+      .addCase(getFriendList.rejected, (state) => {
+        state.status = "rejected";
+      });
   },
 });
 export const getLoginProps = (state) => state.UserSessionSlice;
