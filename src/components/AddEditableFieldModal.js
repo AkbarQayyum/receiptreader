@@ -14,7 +14,7 @@ const AddEditableFieldModal = ({ open, setOpen, setitems, items }) => {
     setvalue({ ...value, [title]: val });
   };
   const handleSave = () => {
-    console.log(value);
+   
     setitems({ ...items, [value?.title]: value?.value });
     handleClose();
   };

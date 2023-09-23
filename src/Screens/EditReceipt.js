@@ -10,18 +10,17 @@ import Toast from "react-native-toast-message";
 
 const EditReceipt = ({ selected, setshowedit, navigation }) => {
   const [values, setvalues] = useState(selected);
-  const [items, setitems] = useState({ ...selected?.items, ak: "0" });
+  const [items, setitems] = useState({ ...selected?.items });
   const [open, setOpen] = useState(false);
   const [loading, setloading] = useState(false);
   const handleValueChange = (value, title) => {
-    console.log(value, title);
+  
     setvalues({ ...values, [title]: value });
   };
   const handleItemsChange = (value, title) => {
-    console.log(value, title);
+  
     setitems({ ...items, [title]: value });
   };
-  console.log(selected);
 
   const handleSave = async () => {
     setloading(true);
@@ -42,7 +41,7 @@ const EditReceipt = ({ selected, setshowedit, navigation }) => {
       navigation.navigate("Home");
     }
     setloading(false);
-    console.log(res);
+    
   };
 
   useEffect(() => {
@@ -52,7 +51,6 @@ const EditReceipt = ({ selected, setshowedit, navigation }) => {
         sum = sum + (parseFloat(items[d]) || 0);
       }
     });
-    console.log(sum);
     setvalues({
       ...values,
       ["subtotal"]: (

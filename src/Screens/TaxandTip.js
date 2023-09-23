@@ -44,7 +44,6 @@ const TaxandTip = ({
     setgtotal((sum + parseFloat(subt)).toString());
   }, [taxvalue]);
   useEffect(() => {
-    console.log(data);
     let sum = 0;
     Object.keys(data)?.map((d) => {
       sum = sum + parseFloat(data[d]);

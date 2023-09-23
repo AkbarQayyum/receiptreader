@@ -38,7 +38,7 @@ const ReceiptDetails = ({
   const [selectedfriendsid, setseletedfriendsid] = useState([]);
   const [itemsvalues, setitemsvalue] = useState({});
   const [dt, setdt] = useState({});
-
+  const [selected, setseleted] = useState({});
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -54,12 +54,13 @@ const ReceiptDetails = ({
 
   useEffect(() => {
     setdummy(data);
+    console.log(data);
   }, [data]);
 
   const handleSave = async (values) => {
     setloading(true);
     let obj = { ...values, items: dummy };
- 
+
     const res = await axiosInstance.post("/users/auth/receipt", {
       items: JSON.stringify(obj),
       userid: user?._id,
@@ -81,33 +82,13 @@ const ReceiptDetails = ({
     }
   };
 
-  const handleSaveAndShare = (allselecteduser) => {
+  const handleSaveAndShare = (val) => {
+   
     setloading(true);
-    let friendlength = friends?.length;
-    console.log(friendlength)
-    let allusers = [...allselecteduser];
-    let obj = {};
-    let itemize = { ...dummy };
-    Object.keys(itemsvalues)?.map((d) => {
-      obj = { ...obj, [d]: parseFloat(itemsvalues[d] / (friendlength + 1)) };
-    });
-    Object.keys(dt)?.map((d) => {
-      if (!isNaN(dt[d])) {
-        itemize = { ...itemize, [d]: parseFloat(dt[d] / (friendlength + 1)) };
-      }
-    });
-
-    console.log({ ...obj, items: { ...itemize } });
-
-    const allreq = allusers?.map((u) => {
+    const allreq = val?.map((u) => {
       return axiosInstance.post("/friend/addreceipt", {
-        receipt: JSON.stringify({
-          ...obj,
-          items: { ...itemize },
-          name: "Receipt",
-          date: new Date().toDateString(),
-        }),
-        userid: u,
+        receipt: JSON.stringify(u?.data),
+        userid: u?.userid,
       });
     });
     axios
@@ -140,6 +121,12 @@ const ReceiptDetails = ({
     setitemsvalue(values);
     setdt(dat);
 
+    setseleted({
+      ...values,
+      name: "Receipt",
+      date: new Date().toDateString(),
+      items: { ...dat },
+    });
     setselectfriend(true);
   };
 
@@ -206,9 +193,10 @@ const ReceiptDetails = ({
       )}
       {selectfriend ? (
         <SaveAndShareModal
-          selectfriend={selectfriend}
-          setselectfriend={setselectfriend}
-          handleSaveAndShare={handleSaveAndShare}
+          openfriendselect={selectfriend}
+          setopenfriendselect={setselectfriend}
+          handleShare={handleSaveAndShare}
+          selected={selected}
         />
       ) : null}
     </>

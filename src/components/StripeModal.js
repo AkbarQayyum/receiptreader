@@ -2,15 +2,17 @@ import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import React, { useState } from "react";
 import { Button, Modal } from "native-base";
 import tw from "twrnc";
-import { CardField, useConfirmPayment } from "@stripe/stripe-react-native";
+import {
+  CardField,
+  useConfirmPayment,
+  useStripe,
+} from "@stripe/stripe-react-native";
 import axiosInstance from "../../utils/axiosinstance";
-import { useSelector } from "react-redux";
-import { getLoginProps } from "../../Redux/Slices/UserSessionSlice";
 
 const StripeModal = ({ openpayment, setopenPayment, selected }) => {
   const [carddetails, setcarddetails] = useState(null);
-  const { user } = useSelector(getLoginProps);
-  const { confirmPayment, loading } = useConfirmPayment();
+
+  const { confirmPayment, loading } = useStripe();
 
   const handleClose = () => {
     setopenPayment(false);
@@ -18,38 +20,30 @@ const StripeModal = ({ openpayment, setopenPayment, selected }) => {
 
   const fetchpaymentclientindentsecret = async () => {
     let res = await axiosInstance.post("/stripe/create-payment-intent");
-    console.log(res.data);
+
     return res.data;
   };
 
-  
   const billingDetails = {
     email: "akbarqayyum0@gmail.com",
   };
 
   const handlePayment = async () => {
-    console.log(carddetails);
     if (!carddetails?.complete) {
       return Alert.alert("Please enter complete and valid card details");
     }
+    const { clientsecret } = await fetchpaymentclientindentsecret();
 
-    try {
-      const { clientsecret } = await fetchpaymentclientindentsecret();
-      console.log(clientsecret);
-      const { paymentIntent, error } = await confirmPayment(clientsecret, {
-        type: "Card",
-        paymentMethodType: "Card",
-        billingDetails: billingDetails,
-      });
-      if (error) {
-        alert(`payment confirmation error ${error.message}`);
-        console.log(error)
-      } else if (paymentIntent) {
-        alert("payment successfull");
-        console.log("payment intent", paymentIntent);
-      }
-    } catch (error) {
-      console.log(error);
+    const { paymentIntent, error } = await confirmPayment(clientsecret, {
+      type: "Card",
+      paymentMethodType: "Card",
+      billingDetails: billingDetails,
+    });
+
+    if (error) {
+      alert(`payment confirmation error ${error.message}`);
+    } else if (paymentIntent) {
+      alert("payment successfull");
     }
   };
 

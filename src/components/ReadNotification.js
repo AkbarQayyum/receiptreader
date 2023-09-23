@@ -10,9 +10,9 @@ const ReadNotification = ({ read, readcount }) => {
   const { user } = useSelector(getLoginProps);
   const dispatch = useDispatch();
   const handleDelete = async (id) => {
-    console.log(id);
+
     let res = await axiosInstance.delete(`/notifications/delete/${id}`);
-    console.log(res.data);
+
     if (res.data) {
       dispatch(getnotifications({ id: user?._id }));
     }

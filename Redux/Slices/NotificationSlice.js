@@ -10,9 +10,9 @@ const initialState = {
 };
 
 export const getnotifications = createAsyncThunk("getnoti", async ({ id }) => {
-  console.log(id);
+
   let res = await axiosInstance.get(`/notifications/${id}`);
-  console.log(res.data);
+ 
   return res.data;
 });
 

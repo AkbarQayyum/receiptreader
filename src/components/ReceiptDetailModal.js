@@ -20,50 +20,18 @@ const ReceiptDetailModal = ({
   handleDelete,
   setshowedit,
 }) => {
-  const { user } = useSelector(getLoginProps);
-  const [selectedfriend, setselectedfriend] = useState([user?._id]);
   const [openfriendselect, setopenfriendselect] = useState(false);
   const [loading, setloading] = useState(false);
   const handleClose = () => {
     setOpen(false);
   };
 
-  const handleShare = () => {
-    // console.log(selectedfriend);
+  const handleShare = (val) => {
     setloading(true);
-    let obj = { ...selected, items: {} };
-    let items = { ...selected.items };
-    let itemize = { ...items };
-    // console.log(selectedfriend?.length);
-    Object.keys(selected)?.map((k) => {
-      if (!isNaN(selected[k])) {
-        console.log(k, selected[k]);
-        obj = {
-          ...obj,
-          [k]: parseFloat(selected[k]) / selectedfriend?.length,
-        };
-      }
-    });
-    Object.keys(items)?.map((k) => {
-      if (!isNaN(items[k])) {
-        console.log(k, items[k]);
-        itemize = {
-          ...itemize,
-          [k]: parseFloat(items[k]) / selectedfriend?.length,
-        };
-      }
-    });
-    console.log({ ...obj, items: { ...itemize } });
-
-    const allreq = selectedfriend?.map((u) => {
+    const allreq = val?.map((u) => {
       return axiosInstance.post("/friend/addreceipt", {
-        receipt: JSON.stringify({
-          ...obj,
-          items: { ...itemize },
-          name: "Receipt",
-          date: new Date().toDateString(),
-        }),
-        userid: u,
+        receipt: JSON.stringify(u?.data),
+        userid: u?.userid,
       });
     });
     axios
@@ -155,8 +123,7 @@ const ReceiptDetailModal = ({
               openfriendselect={openfriendselect}
               setopenfriendselect={setopenfriendselect}
               handleShare={handleShare}
-              selectedfriend={selectedfriend}
-              setselectedfriend={setselectedfriend}
+              selected={selected}
             />
           ) : null}
           {loading ? <Loader /> : null}

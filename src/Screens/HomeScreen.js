@@ -148,7 +148,6 @@ const HomeScreen = ({ navigation }) => {
           });
       })
       .catch((error) => {
-        console.log(error);
         Toast.show({
           type: "error",
           text1: "something went wrong ",

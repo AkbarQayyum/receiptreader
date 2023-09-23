@@ -9,11 +9,10 @@ const initialState = {
 };
 
 export const getFriendList = createAsyncThunk("getfriend", async ({ id }) => {
-  console.log('asasasdsfd',id);
+  
   let res = await axiosInstance.post(`/friend/getuserfriendlist/`, {
     id: id,
   });
-  console.log('slice data',res.data);
   return res.data;
 });
 
@@ -37,7 +36,6 @@ export const UserSessionSlice = createSlice({
         state.status = "pending";
       })
       .addCase(getFriendList.fulfilled, (state, action) => {
-        console.log('api res',action.payload)
         state.friends = action.payload;
       })
       .addCase(getFriendList.rejected, (state) => {

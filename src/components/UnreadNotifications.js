@@ -13,13 +13,12 @@ const UnreadNotifications = ({ unreadcount, unread }) => {
   const [noti, setnoti] = useState({});
   const [open, setOpen] = useState(false);
   const handleOpenNotification = async (notific) => {
-    console.log(notific);
+   
     setnoti(notific);
     setOpen(true);
     let res = await axiosInstance.put("/notifications/update", {
       id: notific?._id,
     });
-    console.log(res);
     if (res?.data) {
       // setOpen(false);
      
