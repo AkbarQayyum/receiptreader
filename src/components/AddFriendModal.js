@@ -1,4 +1,5 @@
 import {
+  Alert,
   KeyboardAvoidingView,
   Pressable,
   ScrollView,
@@ -18,7 +19,7 @@ import { useSelector } from "react-redux";
 import { getLoginProps } from "../../Redux/Slices/UserSessionSlice";
 import Toast from "react-native-toast-message";
 
-const AddFriendModal = ({ open, setOpen, getuserfriend }) => {
+const AddFriendModal = ({ open, setOpen, getuserfriend, friend }) => {
   const [data, setdata] = useState([]);
   const [name, setname] = useState("");
   const [searchby, setsearchby] = useState("");
@@ -43,15 +44,26 @@ const AddFriendModal = ({ open, setOpen, getuserfriend }) => {
   };
 
   const addFriends = async (id) => {
-    setloading(true);
-    const res = await axiosInstance.post("/friend/add", {
-      userid: user?._id,
-      friendid: id,
-    });
+    console.log("friend id", id);
 
-    setloading(false);
-    getuserfriend();
-    handleClose();
+    let found = false;
+    friend?.find((d) => {
+      if (d?._id === id) {
+        found = true;
+      }
+    });
+    if (found) {
+      return Alert.alert("Friend already exist in your friend list");
+    } else if (!found) {
+      setloading(true);
+      const res = await axiosInstance.post("/friend/add", {
+        userid: user?._id,
+        friendid: id,
+      });
+      setloading(false);
+      getuserfriend();
+      handleClose();
+    }
   };
 
   const handleClose = () => {

@@ -7,12 +7,12 @@ const initialState = {
   readcount: 0,
   unreadcount: 0,
   status: "idle",
+  data: [],
 };
 
 export const getnotifications = createAsyncThunk("getnoti", async ({ id }) => {
-
   let res = await axiosInstance.get(`/notifications/${id}`);
- 
+
   return res.data;
 });
 
@@ -31,6 +31,7 @@ export const NotificationSlice = createSlice({
         state.readcount = action.payload.readcount;
         state.unreadcount = action.payload.unreadcount;
         state.status = "success";
+        state.data = [...action.payload.read, ...action.payload.unread];
       })
       .addCase(getnotifications.rejected, (state) => {
         state.status = "rejected";

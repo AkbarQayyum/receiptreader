@@ -45,6 +45,7 @@ const AddFriend = () => {
             open={open}
             setOpen={setOpen}
             getuserfriend={getuserfriend}
+            friend={friend}
           />
         ) : null}
       </View>
