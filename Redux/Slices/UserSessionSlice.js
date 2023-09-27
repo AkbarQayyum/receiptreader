@@ -9,12 +9,23 @@ const initialState = {
 };
 
 export const getFriendList = createAsyncThunk("getfriend", async ({ id }) => {
-  
   let res = await axiosInstance.post(`/friend/getuserfriendlist/`, {
     id: id,
   });
   return res.data;
 });
+
+export const getUpdatedUserDetails = createAsyncThunk(
+  "getval",
+  async ({ id }) => {
+    console.log(id);
+    let res = await axiosInstance.post(`/stripe/getuser/`, {
+      id: id,
+    });
+    console.log(res.data);
+    return res.data;
+  }
+);
 
 export const UserSessionSlice = createSlice({
   name: "UserSessionSlice",
@@ -39,6 +50,15 @@ export const UserSessionSlice = createSlice({
         state.friends = action.payload;
       })
       .addCase(getFriendList.rejected, (state) => {
+        state.status = "rejected";
+      })
+      .addCase(getUpdatedUserDetails.pending, (state) => {
+        state.status = "pending";
+      })
+      .addCase(getUpdatedUserDetails.fulfilled, (state, action) => {
+        state.user = action.payload;
+      })
+      .addCase(getUpdatedUserDetails.rejected, (state) => {
         state.status = "rejected";
       });
   },

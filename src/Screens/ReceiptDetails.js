@@ -5,7 +5,11 @@ import { Button, Input } from "native-base";
 import { AntDesign, Ionicons } from "react-native-vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 import { useDispatch, useSelector } from "react-redux";
-import { getdummydata, handleReset } from "../../Redux/Slices/handleDummyData";
+import {
+  getdummydata,
+  handleReset,
+  updatedata,
+} from "../../Redux/Slices/handleDummyData";
 import { useEffect } from "react";
 import { useState } from "react";
 import Toast from "react-native-toast-message";
@@ -26,9 +30,10 @@ const ReceiptDetails = ({
   setOpenCamera,
   setImage,
 }) => {
-  const { data } = useSelector(getdummydata);
+  const { data, newlyaddfield } = useSelector(getdummydata);
   const { user, friends } = useSelector(getLoginProps);
   const [dummy, setdummy] = useState({});
+  const [newfields, setnewfields] = useState({});
   const [open, setOpen] = useState(false);
   const isFocus = useIsFocused();
 
@@ -54,15 +59,33 @@ const ReceiptDetails = ({
 
   useEffect(() => {
     setdummy(data);
-    console.log(data);
   }, [data]);
+  useEffect(() => {
+    setnewfields(newlyaddfield);
+  }, [newlyaddfield]);
+  useEffect(() => {
+    let sum = 0;
+    Object.keys(newfields).map((d) => {
+      if (!isNaN(newfields[d])) {
+        sum = sum + +newfields[d];
+      }
+    });
+    let obj = JSON.parse(JSON.stringify(data));
+    console.log(obj);
+    obj = {
+      ...obj,
+      SUBTOTAL: (+data.SUBTOTAL + sum).toString(),
+      TOTAL: (+data.TOTAL + sum).toString(),
+    };
+    setdummy(obj);
+  }, [newfields]);
 
   const handleSave = async (values) => {
     setloading(true);
-    let obj = { ...values, items: dummy };
+    let obj = { ...values, items: { ...dummy, ...newfields } };
 
     const res = await axiosInstance.post("/users/auth/receipt", {
-      items: JSON.stringify(obj),
+      items: JSON.stringify({ ...obj }),
       userid: user?._id,
     });
 
@@ -83,7 +106,6 @@ const ReceiptDetails = ({
   };
 
   const handleSaveAndShare = (val) => {
-   
     setloading(true);
     const allreq = val?.map((u) => {
       return axiosInstance.post("/friend/addreceipt", {
@@ -125,9 +147,13 @@ const ReceiptDetails = ({
       ...values,
       name: "Receipt",
       date: new Date().toDateString(),
-      items: { ...dat },
+      items: { ...dat, ...newfields },
     });
     setselectfriend(true);
+  };
+
+  const handleNewFieldChange = (val, title) => {
+    setnewfields({ ...newfields, [title]: val });
   };
 
   return (
@@ -160,6 +186,9 @@ const ReceiptDetails = ({
                     value={dummy[v]}
                     width={"50%"}
                     multiline
+                    isDisabled={
+                      v === "SUBTOTAL" || v === "TOTAL" || v === "TAX"
+                    }
                     onChangeText={(e) => {
                       handleChange(e, v);
                     }}
@@ -168,6 +197,28 @@ const ReceiptDetails = ({
               );
             })}
           </View>
+
+          <View style={tw`border-2 w-full p-2 border-gray-300 flex gap-3`}>
+            {Object?.keys(newfields)?.map((v, i) => {
+              return (
+                <View
+                  style={tw`w-full border-2 border-gray-300 p-1 flex-row justify-between items-start`}
+                >
+                  <Text style={tw`font-bold italic`}>{v}</Text>
+                  <Input
+                    value={newfields[v]}
+                    width={"50%"}
+                    multiline
+                    isDisabled={v === "SUBTOTAL" || v === "TOTAL"}
+                    onChangeText={(e) => {
+                      handleNewFieldChange(e, v);
+                    }}
+                  />
+                </View>
+              );
+            })}
+          </View>
+
           <View style={tw`flex-row justify-between items-center w-full px-2`}>
             <Button
               style={tw`px-5 w-full `}
@@ -186,6 +237,7 @@ const ReceiptDetails = ({
           handleCancel={handleCancel}
           handleSave={handleSave}
           setshowtax={setshowtax}
+          dummy={dummy}
           showtax={showtax}
           handleSaveAndShare={handleSaveAndShare}
           handleSelectFriend={handleSelectFriend}
@@ -197,6 +249,7 @@ const ReceiptDetails = ({
           setopenfriendselect={setselectfriend}
           handleShare={handleSaveAndShare}
           selected={selected}
+          newfields={newfields}
         />
       ) : null}
     </>

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Alert, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import tw from "twrnc";
 import { useIsFocused } from "@react-navigation/native";
@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { getLoginProps } from "../../Redux/Slices/UserSessionSlice";
 import ViewPayableBills from "../components/ViewPayableBill";
 import StripeModal from "../components/StripeModal";
+import { useStripe } from "@stripe/stripe-react-native";
 const JoinBill = () => {
   const [allreceipts, setallreceipts] = useState([]);
   const [loading, setloading] = useState(false);
@@ -19,6 +20,7 @@ const JoinBill = () => {
   const { user } = useSelector(getLoginProps);
   const [selected, setselected] = useState({});
   const isFocus = useIsFocused();
+  const stripe = useStripe();
   useEffect(() => {
     setloading(true);
 
@@ -42,6 +44,40 @@ const JoinBill = () => {
       receipt: JSON.stringify(va),
     });
     await getData();
+  };
+
+  const paycall = async (val) => {
+    try {
+      if (!user?.isAccountAttatched) {
+        return Alert.alert(
+          "Please go to profile section and add your account keys"
+        );
+      }
+      let res = await axiosInstance.post("/stripe/create-payment-intent", {
+        id: user?._id,
+        amount: val?.grandtotal,
+      });
+      const { clientsecret } = await res.data;
+      const initsheet = await stripe.initPaymentSheet({
+        paymentIntentClientSecret: clientsecret,
+        merchantDisplayName: "Test",
+      });
+      if (initsheet.error) {
+        return Alert.alert(initsheet.error.message);
+      }
+      console.log(initsheet);
+      const presentsheet = await stripe.presentPaymentSheet({
+        clientSecret: clientsecret,
+      });
+      console.log(presentsheet);
+      if (presentsheet.error) {
+        return Alert.alert(presentsheet.error.message);
+      }
+      Alert.alert("payment complete");
+    } catch (error) {
+      console.log(error);
+      Alert.alert("something went wrong");
+    }
   };
 
   return (
@@ -77,7 +113,8 @@ const JoinBill = () => {
                     backgroundColor={"#272829"}
                     onPress={() => {
                       setselected(t);
-                      setopenPayment(true);
+                      // setopenPayment(true);
+                      paycall(t);
                     }}
                   >
                     Pay

@@ -10,27 +10,24 @@ import { useSelector } from "react-redux";
 import { getdummydata } from "../../Redux/Slices/handleDummyData";
 
 const TaxandTip = ({
-  navigation,
   setshowtax,
-  showtax,
   handleCancel,
   handleSave,
-  handleSaveAndShare,
-
+  dummy,
   handleSelectFriend,
 }) => {
   const [calc, setcalc] = useState();
   const [subt, setsubt] = useState("0");
   const [gtotal, setgtotal] = useState("0");
-  const { data } = useSelector(getdummydata);
+  // const { dummy } = useSelector(getdummydata);
   const isFocus = useIsFocused();
+  const [tippercentage, settippercentage] = useState("5");
   const [taxvalue, settaxvalue] = useState({
-    includedtip: "0",
     tip: "0",
     discount: "0",
-    tax: data["TAX"] || "0",
+    tax: dummy["TAX"] || "0",
   });
-
+  console.log(dummy);
   const handleChange = (val, title) => {
     settaxvalue({ ...taxvalue, [title]: val });
   };
@@ -41,18 +38,28 @@ const TaxandTip = ({
       sum = sum + parseFloat(taxvalue[d]);
     });
 
-    setgtotal((sum + parseFloat(subt)).toString());
+    setgtotal((sum + parseFloat(subt)).toFixed(2).toString());
   }, [taxvalue]);
   useEffect(() => {
     let sum = 0;
-    Object.keys(data)?.map((d) => {
-      sum = sum + parseFloat(data[d]);
+    Object.keys(dummy)?.map((d) => {
+      sum = sum + parseFloat(dummy[d]);
     });
-    setsubt(data["SUBTOTAL"]?.toString() || sum?.toString());
-    setgtotal(data["TOTAL"] || sum?.toString());
-  }, [isFocus, data]);
+    setsubt(dummy["SUBTOTAL"]?.toString() || sum?.toString());
+    setgtotal(dummy["TOTAL"] || sum?.toString());
+  }, [isFocus, dummy]);
+
+  useEffect(() => {
+    console.log(dummy?.SUBTOTAL);
+    let val = +dummy?.SUBTOTAL * (+tippercentage / 100);
+    settaxvalue({ ...taxvalue, tip: val?.toFixed(2).toString() });
+    console.log(val);
+  }, [isFocus, tippercentage]);
+
   return (
-    <ScrollView contentContainerStyle={tw`items-center p-2 gap-5`}>
+    <ScrollView
+      contentContainerStyle={tw`items-center p-2 gap-5 justify-between h-full`}
+    >
       <View style={tw`flex-row justify-between items-center w-full px-2`}>
         <Text style={tw`font-bold text-xl`}>Tax & Tips</Text>
         <Pressable onPress={() => setshowtax(false)}>
@@ -72,19 +79,7 @@ const TaxandTip = ({
             isDisabled
           />
         </View>
-        <View
-          style={tw`w-full border-2 border-gray-300 p-1 flex-row justify-between items-start`}
-        >
-          <Text style={tw`font-bold italic`}>included Tip</Text>
-          <Input
-            value={taxvalue?.includedtip}
-            width={"50%"}
-            multiline
-            onChangeText={(e) => {
-              handleChange(e, "includedtip");
-            }}
-          />
-        </View>
+
         <View
           style={tw`w-full border-2 border-gray-300 p-1 flex-row justify-between items-start`}
         >
@@ -93,6 +88,7 @@ const TaxandTip = ({
             value={taxvalue?.tip}
             width={"50%"}
             multiline
+            isDisabled={true}
             onChangeText={(e) => {
               handleChange(e, "tip");
             }}
@@ -139,6 +135,29 @@ const TaxandTip = ({
           />
         </View>
       </View>
+      <View style={tw`flex-row items-center justify-center gap-6`}>
+        <Pressable
+          style={tw`border border-gray-400 p-2`}
+          onPress={() => {
+            settippercentage((tip) => (+tip + 1).toString());
+          }}
+        >
+          <Ionicons name={"add"} size={35} color={"#272727"} />
+        </Pressable>
+        <Text style={tw`text-4xl italic`}>{tippercentage} %</Text>
+        <Pressable
+          style={tw`border border-gray-400 p-2`}
+          onPress={() => {
+            if (+tippercentage < 1) {
+              settippercentage(0);
+            } else {
+              settippercentage((tip) => (+tip - 1).toString());
+            }
+          }}
+        >
+          <AntDesign name={"minus"} size={35} color={"272727"} />
+        </Pressable>
+      </View>
       <View
         style={tw`flex-row justify-between items-center gap-3 w-full px-2 flex-wrap`}
       >
@@ -167,7 +186,7 @@ const TaxandTip = ({
                 subtotal: subt,
                 grandtotal: gtotal,
               },
-              data
+              dummy
             );
           }}
         >

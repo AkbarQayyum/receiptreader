@@ -191,7 +191,7 @@ const FriendSelectModal = ({
   openfriendselect,
   setopenfriendselect,
   handleShare,
-
+  newfields,
   selected,
 }) => {
   const { user, friends } = useSelector(getLoginProps);
